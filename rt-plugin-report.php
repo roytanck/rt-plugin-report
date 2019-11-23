@@ -55,7 +55,7 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 		 * Load the translated strings
 		 */
 		function load_textdomain(){
-			load_plugin_textdomain( 'rt-plugin-report', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+			load_plugin_textdomain( 'plugin-report', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 		}
 
 
