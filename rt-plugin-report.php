@@ -19,8 +19,8 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 	class RT_Plugin_Report {
 
 		public $cols_per_row = 7;
-		public $cache_lifetime = 60*60*24;
-		public $cache_lifetime_norepo = 60*60*24*7;
+		public $cache_lifetime = DAY_IN_SECONDS;
+		public $cache_lifetime_norepo = WEEK_IN_SECONDS;
 
 		/**
 		 * Constructor
