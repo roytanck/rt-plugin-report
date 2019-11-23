@@ -5,8 +5,6 @@ jQuery(document).ready( function( $ ){
 	var rtpr_nrof_plugins = rtpr_slugs_array.length;
 	var rtpr_progress = 0;
 
-	//$('#rt-debug').html( slugs );
-
 	function rtpr_process_next_plugin(){
 		if( rtpr_slugs_array.length > 0 ){
 			var slug = rtpr_slugs_array.shift();
@@ -21,10 +19,9 @@ jQuery(document).ready( function( $ ){
 		var perc = Math.ceil( ( rtpr_progress / rtpr_nrof_plugins ) * 100 );
 		if( perc < 100 ){
 			$('#rt-plugin-report-progress').html( '<div class="rt-plugin-report-progress-outer"><div class="rt-plugin-report-progress-inner" style="width:' + perc + '%;"></div></div>' );
-			//$('#rt-plugin-report-progress').html( rtpr_progress + '/' + rtpr_nrof_plugins + ' (' + Math.ceil((rtpr_progress/rtpr_nrof_plugins)*100) + '%)' );
 			rtpr_progress++;	
 		} else {
-			$('#rt-plugin-report-progress').html( 'Complete!' );
+			$('#rt-plugin-report-progress').html( rt_plugin_report_vars.complete_str );
 		}
 		
 	}

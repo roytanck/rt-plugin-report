@@ -148,7 +148,8 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 			$slugs_str = implode( ',', $slugs );
 			$vars = array(
 				'plugin_slugs' => $slugs_str,
-				'ajax_nonce' => wp_create_nonce('rt_plugin_report_nonce')
+				'ajax_nonce' => wp_create_nonce('rt_plugin_report_nonce'),
+				'complete_str' => __( 'Information updated', 'plugin-report' )
 			);
 			wp_localize_script( 'rt-plugin-report-js', 'rt_plugin_report_vars', $vars );
 			// enqueue admin CSS file
