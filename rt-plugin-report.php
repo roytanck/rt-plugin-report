@@ -3,7 +3,7 @@
  * Plugin Name:       Plugin Report
  * Plugin URI:        https://roytanck.com
  * Description:       Provides detailed information about currently installed plugins
- * Version:           1.0
+ * Version:           1.1
  * Requires at least: 5.0
  * Requires PHP:      5.6
  * Author:            Roy Tanck
@@ -100,7 +100,7 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 
 			// start the page's output
 			echo '<div class="wrap">';
-			echo '<h2>' . __( 'Plugin Report', 'plugin-report' ) . '</h2>';
+			echo '<h1>' . __( 'Plugin Report', 'plugin-report' ) . '</h1>';
 			echo '<p>';
 			$version_temp = '<span class="' . $this->get_version_risk_classname( $wp_version, $wp_latest ) . '">' . $wp_version . '</span>';
 			echo sprintf( __( 'Currently running WordPress version: %s.', 'plugin-report' ), $version_temp );
