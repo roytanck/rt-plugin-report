@@ -31,7 +31,11 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 			// load the plugin's text domain			
 			add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
 			// hook for the admin page
-			add_action( 'admin_menu', array( $this, 'register_settings_page' ) );
+			if( is_multisite() ){
+				add_action( 'network_admin_menu', array( $this, 'register_settings_page' ) );
+			} else {
+				add_action( 'admin_menu', array( $this, 'register_settings_page' ) );
+			}
 			// hook for the admin js
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_js' ) );
 			// add the AJAX hook
@@ -65,6 +69,11 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 		 * Render the options page
 		 */
 		function settings_page() {
+			// check user capabilites, just to be sure
+			if( !current_user_can('manage_options') ){
+				die();
+			}
+			// assemble information we'll need
 			global $wp_version;
 			$plugins = get_plugins();
 			
@@ -74,10 +83,10 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 			// refresh the cache, but only if this is a fresh timestamp (not if the page has been refreshed with the timestamp still in the URL)
 			if( isset( $_GET['clear_cache'] ) ){
 				$new_timestamp = intval( $_GET['clear_cache'] );
-				$last_timestamp = intval( get_transient( 'rt_plugin_report_cache_cleared' ) );
+				$last_timestamp = intval( get_site_transient( 'rt_plugin_report_cache_cleared' ) );
 				if( !$last_timestamp || intval( $_GET['clear_cache'] ) > $last_timestamp ){
 					$this->clear_cache();
-					set_transient( 'rt_plugin_report_cache_cleared', $new_timestamp, $this->cache_lifetime );	
+					set_site_transient( 'rt_plugin_report_cache_cleared', $new_timestamp, $this->cache_lifetime );	
 				}
 			}
 
@@ -92,7 +101,13 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 			}
 			echo '</p>';
 			echo '<p>';
-			echo '<a href="' . admin_url( 'plugins.php?page=rt_plugin_report&clear_cache=' . current_time('timestamp') ) . '">' . __( 'Clear cached plugin data', 'plugin-report' ) . '</a>';
+			// clear cache and reload
+			if( is_multisite() ){
+				$page_url = 'network/plugins.php?page=rt_plugin_report';
+			} else {
+				$page_url = 'plugins.php?page=rt_plugin_report';
+			}
+			echo '<a href="' . admin_url( $page_url . '&clear_cache=' . current_time('timestamp') ) . '">' . __( 'Clear cached plugin data and reload', 'plugin-report' ) . '</a>';
 			echo '</p>';
 			echo '<h3>' . __( 'Currently installed plugins', 'plugin-report' ) . '</h3>';
 			echo '<p id="rt-plugin-report-progress"></p>';
@@ -111,9 +126,9 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 			echo '</tr>';
 
 			foreach( $plugins as $key=>$plugin ){
-				$slug = $this->get_plugin_slug( $key ); //sanitize_title( $plugin['Name'] );
+				$slug = $this->get_plugin_slug( $key );
 				$cache_key = 'rt_plugin_report_cache_' . $slug;
-				$cache = get_transient( $cache_key );
+				$cache = get_site_transient( $cache_key );
 				if( $cache ){
 					// use the cached report to create a table row
 					echo $this->render_table_row( $cache );
@@ -195,6 +210,11 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 				die();
 			}
 
+			// check user capabilites, just to be sure
+			if( !current_user_can('manage_options') ){
+				die();
+			}
+
 			// Check if get_plugins() function exists.
 			if ( ! function_exists( 'plugins_api' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
@@ -230,7 +250,7 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 			if( !empty( $slug ) ){
 				$report = array();
 				$cache_key = 'rt_plugin_report_cache_' . $slug;
-				$cache = get_transient( $cache_key );
+				$cache = get_site_transient( $cache_key );
 				$plugins = get_plugins();
 
 				if( empty( $cache ) ){
@@ -266,10 +286,10 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 					if( !is_wp_error( $returned_object ) ){
 						$report['repo_info'] = maybe_unserialize( $returned_object );
 						// cache the report
-						set_transient( $cache_key, $report, $this->cache_lifetime );
+						set_site_transient( $cache_key, $report, $this->cache_lifetime );
 					} else {
 						// cache for an extra long time when the plgin is not in the repo
-						set_transient( $cache_key, $report, $this->cache_lifetime_norepo );
+						set_site_transient( $cache_key, $report, $this->cache_lifetime_norepo );
 					}
 
 				} else {
@@ -441,7 +461,7 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 			foreach( $plugins as $key=>$plugin ){
 				$slug = $this->get_plugin_slug( $key );
 				$cache_key = 'rt_plugin_report_cache_' . $slug;
-				delete_transient( $cache_key );
+				delete_site_transient( $cache_key );
 			}
 		}
 
