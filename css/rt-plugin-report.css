@@ -1,15 +1,11 @@
 /* risk indicator classes */
 .rt-risk-low {color: #090 !important; font-weight: bold; }
 .rt-risk-high { color: #c00 !important; font-weight: bold; }
-.rt-risk-medium { color: #339 !important; font-weight: bold; }
-
-/* make non-repo plugins less 'heavy' visually */
-.rt-pluginreport-row-error td { color: #aaa; }
+.rt-risk-medium { font-weight: bold; }
 
 /* progress bar */
 .rt-plugin-report-progress-outer {
 	width: 100%;
-	/*max-width: 600px;*/
 	height: 1em;
 	background-color: #fff;
 	border: 1px solid #e5e5e5;
