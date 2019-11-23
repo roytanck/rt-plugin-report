@@ -7,7 +7,7 @@
  * Requires at least: 5.0
  * Requires PHP:      5.6
  * Author:            Roy Tanck
- * Text Domain:       rt-plugin-report
+ * Text Domain:       plugin-report
  * Domain Path:       /languages
  * License:           GPLv3
  */
@@ -52,8 +52,8 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 		 */
 		function register_settings_page() {
 			add_plugins_page(
-				__( 'Plugin Report', 'rt-plugin-report' ),
-				__( 'Plugin Report', 'rt-plugin-report' ),
+				__( 'Plugin Report', 'plugin-report' ),
+				__( 'Plugin Report', 'plugin-report' ),
 				'manage_options',
 				'rt_plugin_report',
 				array( $this, 'settings_page' )
@@ -83,31 +83,31 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 
 			// start the page's output
 			echo '<div class="wrap">';
-			echo '<h2>' . __( 'Plugin Report', 'rt-plugin-report' ) . '</h2>';
+			echo '<h2>' . __( 'Plugin Report', 'plugin-report' ) . '</h2>';
 			echo '<p>';
 			$version_temp = '<span class="' . $this->get_version_risk_classname( $wp_version, $wp_latest ) . '">' . $wp_version . '</span>';
-			echo sprintf( __( 'Currently running WordPress version: %s.', 'rt-plugin-report' ), $version_temp );
+			echo sprintf( __( 'Currently running WordPress version: %s.', 'plugin-report' ), $version_temp );
 			if( version_compare( $wp_version, $wp_latest, '<' ) ){
-				echo sprintf( ' (' . __( 'An upgrade to %s is available', 'rt-plugin-report' ) . ')', $wp_latest );
+				echo sprintf( ' (' . __( 'An upgrade to %s is available', 'plugin-report' ) . ')', $wp_latest );
 			}
 			echo '</p>';
 			echo '<p>';
-			echo '<a href="' . admin_url( 'plugins.php?page=rt_plugin_report&clear_cache=' . current_time('timestamp') ) . '">' . __( 'Clear cached plugin data', 'rt-plugin-report' ) . '</a>';
+			echo '<a href="' . admin_url( 'plugins.php?page=rt_plugin_report&clear_cache=' . current_time('timestamp') ) . '">' . __( 'Clear cached plugin data', 'plugin-report' ) . '</a>';
 			echo '</p>';
-			echo '<h3>' . __( 'Currently installed plugins', 'rt-plugin-report' ) . '</h3>';
+			echo '<h3>' . __( 'Currently installed plugins', 'plugin-report' ) . '</h3>';
 			echo '<p id="rt-plugin-report-progress"></p>';
 			echo '<p>';
 
 			// the report's main table
 			echo '<table id="rt-plugin-report-table" class="wp-list-table widefat fixed striped">';
 			echo '<tr>';
-			echo '<th>'. __( 'Name', 'rt-plugin-report' ) . '</th>';
-			echo '<th>'. __( 'Author', 'rt-plugin-report' ) . '</th>';
-			echo '<th>'. __( 'Installed version', 'rt-plugin-report' ) . '</th>';
-			echo '<th>'. __( 'Last update', 'rt-plugin-report' ) . '</th>';
-			echo '<th>'. __( 'Tested', 'rt-plugin-report' ) . '</th>';
-			echo '<th>'. __( 'Compatibility reports', 'rt-plugin-report' ) . '</th>';
-			echo '<th>'. __( 'Rating', 'rt-plugin-report' ) . '</th>';
+			echo '<th>'. __( 'Name', 'plugin-report' ) . '</th>';
+			echo '<th>'. __( 'Author', 'plugin-report' ) . '</th>';
+			echo '<th>'. __( 'Installed version', 'plugin-report' ) . '</th>';
+			echo '<th>'. __( 'Last update', 'plugin-report' ) . '</th>';
+			echo '<th>'. __( 'Tested', 'plugin-report' ) . '</th>';
+			echo '<th>'. __( 'Compatibility reports', 'plugin-report' ) . '</th>';
+			echo '<th>'. __( 'Rating', 'plugin-report' ) . '</th>';
 			echo '</tr>';
 
 			foreach( $plugins as $key=>$plugin ){
@@ -206,7 +206,7 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 			if( $report ){
 				$table_row = $this->render_table_row( $report );
 			} else {
-				$table_row = $this->render_error_row( __( 'No plugin data available.', 'rt-plugin-report' ) );
+				$table_row = $this->render_error_row( __( 'No plugin data available.', 'plugin-report' ) );
 			}
 
 			// formulate a response
@@ -292,18 +292,10 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 			$wp_latest = $this->check_core_updates();
 			// check if the report is valid
 			if( $report == null ){
-				$html = $this->render_error_row( __( 'No plugin data available.', 'rt-plugin-report' ) );
+				$html = $this->render_error_row( __( 'No plugin data available.', 'plugin-report' ) );
 			} elseif( !isset( $report['repo_info'] ) ){
-				$html = $this->render_error_row( sprintf( __( 'This plugin "%s" does not appear to be in the wordpress.org repository.', 'rt-plugin-report'), $report['slug'] ) );
+				$html = $this->render_error_row( sprintf( __( 'This plugin "%s" does not appear to be in the wordpress.org repository.', 'plugin-report'), $report['slug'] ) );
 			} else {
-
-				/*if( $report['slug'] == 'wp-super-cache' ){
-					echo '<pre>';
-					var_dump( $report['repo_info']->compatibility );
-					echo '</pre>';
-				}*/
-
-
 				$html = '<tr class="rt-plugin-report-row-' . $report['slug'] . '">';
 				// name
 				$html .= '<td><a href="https://wordpress.org/plugins/' . $report['slug'] . '">' . $report['repo_info']->name . '</a></td>';
@@ -327,7 +319,7 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 				$html .= '<td>' . $this->format_compatibility( $report['repo_info']->compatibility ) . '</td>';
 				// overall user rating
 				$css_class = ( intval( $report['repo_info']->num_ratings ) > 0 ) ? $this->get_percentage_risk_classname( intval( $report['repo_info']->rating ) ) : '';
-				$html .= '<td class="' . $css_class . '">' . ( ( intval( $report['repo_info']->num_ratings ) > 0 ) ? $report['repo_info']->rating . '%' : __( 'No data available', 'rt-plugin-report' ) ) . '</td>';
+				$html .= '<td class="' . $css_class . '">' . ( ( intval( $report['repo_info']->num_ratings ) > 0 ) ? $report['repo_info']->rating . '%' : __( 'No data available', 'plugin-report' ) ) . '</td>';
 				$html .= '</tr>';
 			}
 			return $html;
@@ -413,7 +405,7 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 		 */
 		public function format_compatibility( $compatibility ){
 			if( empty( $compatibility ) || !is_array( $compatibility ) ){
-				return __( 'No data available', 'rt-plugin-report' );
+				return __( 'No data available', 'plugin-report' );
 			}
 			// get the latest WP release version number
 			$wp_latest = $this->check_core_updates();
