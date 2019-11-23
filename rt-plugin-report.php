@@ -1,14 +1,16 @@
 <?php
-/*
-	Plugin Name: RT Plugin Report
-	Plugin URI:  http://www.this-play.nl
-	Description: Displays plugin compatibility information for all installed plugins
-	Version:     1.0
-	Author:      Roy Tanck
-	Author URI:  http://www.this-play.nl
-	Text Domain: rt-plugin-report
-	License:     GPLv2
-*/
+/**
+ * Plugin Name:       Plugin Report
+ * Plugin URI:        https://roytanck.com
+ * Description:       Provides detailed information about currently installed plugins
+ * Version:           1.0
+ * Requires at least: 5.0
+ * Requires PHP:      5.6
+ * Author:            Roy Tanck
+ * Text Domain:       rt-plugin-report
+ * Domain Path:       /languages
+ * License:           GPLv3
+ */
 
 // if called without WordPress, exit
 if( !defined('ABSPATH') ){ exit; }

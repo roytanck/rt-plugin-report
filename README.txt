@@ -1,5 +1,5 @@
-=== RT Plugin Report ===
-Contributors: roytanck
+=== Plugin Report ===
+Contributors: roytanck, zodiac1978
 Tags: admin, plugins, multisite
 Requires at least: 5.1
 Tested up to: 5.2
