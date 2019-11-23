@@ -21,7 +21,7 @@ jQuery(document).ready( function( $ ){
 			$('#rt-plugin-report-progress').html( '<div class="rt-plugin-report-progress-outer"><div class="rt-plugin-report-progress-inner" style="width:' + perc + '%;"></div></div>' );
 			rtpr_progress++;	
 		} else {
-			$('#rt-plugin-report-progress').html( rt_plugin_report_vars.complete_str );
+			$('#rt-plugin-report-progress').html( '' );
 		}
 		
 	}
