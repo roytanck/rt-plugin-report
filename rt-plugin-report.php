@@ -28,6 +28,14 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 		 * Constructor
 		 */
 		function __construct() {
+			// intentionally left blank
+		}
+
+
+		/**
+		 * Set up things like hooks and such
+		 */
+		public function init(){
 			// load the plugin's text domain			
 			add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
 			// hook for the admin page
@@ -466,15 +474,10 @@ if( is_admin() && !class_exists('RT_Plugin_Report') ){
 
 	}
 
+	// instantiate the class
+	$rt_plugin_report_instance = new RT_Plugin_Report();
+	$rt_plugin_report_instance->init();
 		
-}
-
-// create an instance of the class
-if( !function_exists('rt_plugin_report_init') && is_admin() ){
-	function rt_plugin_report_init(){
-		$rt_plugin_report_instance = new RT_Plugin_Report();
-	}
-	add_action( 'init', 'rt_plugin_report_init' );
 }
 
 ?>
