@@ -11,6 +11,12 @@ A WordPress plugin that provides detailed information about currently installed 
 
 Plugin Report uses the wordpress.org API to get information about plugins you've installed in your WordPress site. It can be used to spot abandoned plugins, or provide a report to your client about the "plugin health" of the site.
 
+
+== Screenshots ==
+ 
+1. Your plugin report is found under the Plugins menu, and in the Network section if your site is a multisite install.
+
+
 == Changelog ==
 
 = 1.1 (2019-11-23) =
