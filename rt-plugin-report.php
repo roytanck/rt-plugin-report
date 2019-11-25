@@ -126,7 +126,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 			foreach ( $plugins as $key => $plugin ) {
 				$slug      = $this->get_plugin_slug( $key );
-				$cache_key = 'rt_plugin_report_cache_' . $slug;
+				$cache_key = $this->create_cache_key( $slug );
 				$cache     = get_site_transient( $cache_key );
 				if ( $cache ) {
 					// Use the cached report to create a table row.
@@ -247,7 +247,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		public function assemble_plugin_report( $slug ) {
 			if ( ! empty( $slug ) ) {
 				$report    = array();
-				$cache_key = 'rt_plugin_report_cache_' . $slug;
+				$cache_key = $this->create_cache_key( $slug );
 				$cache     = get_site_transient( $cache_key );
 				$plugins   = get_plugins();
 
@@ -428,13 +428,26 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 
 		/**
+		 * Create a cache key that is unique to the provided plugin slug.
+		 */
+		private function create_cache_key( $slug ) {
+			// Create a hash for the plugiin slug.
+			$slug_hash = hash( 'sha256', $slug );
+			// Prefix and limit the string to 40 characters to avoid issues with long keys.
+			$cache_key = 'rtpr_' . substr( $slug_hash, 0, 35 );
+			// Return the key.
+			return $cache_key;
+		}
+
+
+		/**
 		 * Clear all cached plugin info
 		 */
 		public function clear_cache() {
 			$plugins = get_plugins();
 			foreach ( $plugins as $key => $plugin ) {
 				$slug      = $this->get_plugin_slug( $key );
-				$cache_key = 'rt_plugin_report_cache_' . $slug;
+				$cache_key = $this->create_cache_key( $slug );
 				delete_site_transient( $cache_key );
 			}
 		}
