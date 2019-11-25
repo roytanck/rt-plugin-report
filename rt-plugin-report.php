@@ -4,7 +4,7 @@
  * Plugin URI:        https://roytanck.com
  * Description:       Provides detailed information about currently installed plugins
  * Version:           1.1
- * Requires at least: 5.0
+ * Requires at least: 4.6
  * Requires PHP:      5.6
  * Author:            Roy Tanck
  * Text Domain:       plugin-report
@@ -14,7 +14,8 @@
 
 // If called without WordPress, exit.
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; }
+	exit;
+}
 
 
 if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
@@ -37,8 +38,6 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 * Set up things like hooks and such
 		 */
 		public function init() {
-			// Load the plugin's text domain.
-			add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
 			// Hook for the admin page.
 			if ( is_multisite() ) {
 				add_action( 'network_admin_menu', array( $this, 'register_settings_page' ) );
@@ -49,14 +48,6 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_js' ) );
 			// Add the AJAX hook.
 			add_action( 'wp_ajax_rt_get_plugin_info', array( $this, 'get_plugin_info' ) );
-		}
-
-
-		/**
-		 * Load the translated strings
-		 */
-		public function load_textdomain() {
-			load_plugin_textdomain( 'plugin-report', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 		}
 
 
