@@ -20,7 +20,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 	class RT_Plugin_Report {
 
-		public $cols_per_row          = 7;
+		public $cols_per_row          = 6;
 		public $cache_lifetime        = DAY_IN_SECONDS;
 		public $cache_lifetime_norepo = WEEK_IN_SECONDS;
 
@@ -121,7 +121,6 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			echo '<th>' . esc_html__( 'Installed version', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Last update', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Tested', 'plugin-report' ) . '</th>';
-			echo '<th>' . esc_html__( 'Compatibility reports', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Rating', 'plugin-report' ) . '</th>';
 			echo '</tr>';
 
@@ -335,8 +334,6 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				$html       .= '<td class="' . $css_class . '">' . $time_diff . '</td>';
 				// Tested up to.
 				$html .= '<td class="' . $this->get_version_risk_classname( $report['repo_info']->tested, $wp_latest ) . '">' . $report['repo_info']->tested . '</td>';
-				// User-reported compatibility info.
-				$html .= '<td>' . $this->format_compatibility( $report['repo_info']->compatibility ) . '</td>';
 				// Overall user rating.
 				$css_class = ( intval( $report['repo_info']->num_ratings ) > 0 ) ? $this->get_percentage_risk_classname( intval( $report['repo_info']->rating ) ) : '';
 				$html     .= '<td class="' . $css_class . '">' . ( ( intval( $report['repo_info']->num_ratings ) > 0 ) ? $report['repo_info']->rating . '%' : esc_html__( 'No data available', 'plugin-report' ) ) . '</td>';
@@ -417,28 +414,6 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			}
 			// Return the preferred update's version number.
 			return $update->version;
-		}
-
-
-		/**
-		 * Interpret the 'compatibility' info from the repo, and return a summary string
-		 */
-		public function format_compatibility( $compatibility ) {
-			if ( empty( $compatibility ) || ! is_array( $compatibility ) ) {
-				return esc_html__( 'No data available', 'plugin-report' );
-			}
-			// get the latest WP release version number
-			$wp_latest = $this->check_core_updates();
-
-			$out   = '';
-			$score = array();
-			foreach ( $compatibility as $pluginversion => $data ) {
-				$out    .= $pluginversion . ': ' . $data[0] . '% (' . $data[2] . '/' . $data[1] . ')';
-				$score[] = intval( $data[0] );
-			}
-			$css_class = $this->get_percentage_risk_classname( $score[0] );
-			return '<span class="' . $css_class . '">' . $out . '</span>';
-
 		}
 
 
