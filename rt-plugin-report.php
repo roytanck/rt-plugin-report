@@ -356,11 +356,11 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 */
 		public function get_version_risk_classname( $available, $optimal ) {
 			// If the version match, indicate low risk.
-			if ( version_compare( $available, $this->major_release_version_nr( $optimal ), '<=' ) == 0 ) {
+			if ( version_compare( $available, $optimal, '==' ) ) {
 				return 'rt-risk-low';
 			}
 			// If major version match, indicate medium risk.
-			if ( version_compare( $this->major_release_version_nr( $available ), $this->major_release_version_nr( $optimal ) ) == 0 ) {
+			if ( version_compare( $this->major_release_version_nr( $available ), $this->major_release_version_nr( $optimal ), '==' ) ) {
 				return 'rt-risk-medium';
 			}
 			// Else, indicate high risk.
