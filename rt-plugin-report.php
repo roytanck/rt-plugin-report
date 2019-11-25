@@ -7,8 +7,6 @@
  * Requires at least: 4.6
  * Requires PHP:      5.6
  * Author:            Roy Tanck
- * Text Domain:       plugin-report
- * Domain Path:       /languages
  * License:           GPLv3
  */
 
