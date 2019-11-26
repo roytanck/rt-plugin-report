@@ -4,7 +4,7 @@ Tags: admin, plugins, multisite
 Requires at least: 4.6
 Tested up to: 5.3
 Requires PHP: 5.6
-Stable tag: 1.1
+Stable tag: 1.2
 License: GPLv3
 
 A WordPress plugin that provides detailed information about currently installed plugins.
@@ -18,6 +18,11 @@ Plugin Report uses the wordpress.org API to get information about plugins you've
 
 
 == Changelog ==
+
+= 1.2 (2019-11-26) =
+* Removed the "compatibility" column (data no longer provided by API)
+* Fixed an issue with long plugin slugs causing invalide transient keys
+* Fixed an issue where version number colors were inconsistent
 
 = 1.1 (2019-11-23) =
 * Code cleanup

@@ -3,7 +3,7 @@
  * Plugin Name:       Plugin Report
  * Plugin URI:        https://roytanck.com
  * Description:       Provides detailed information about currently installed plugins
- * Version:           1.1
+ * Version:           1.2
  * Requires at least: 4.6
  * Requires PHP:      5.6
  * Author:            Roy Tanck

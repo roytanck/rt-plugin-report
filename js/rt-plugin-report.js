@@ -8,7 +8,6 @@ jQuery(document).ready( function( $ ){
 	function rtpr_process_next_plugin(){
 		if( rtpr_slugs_array.length > 0 ){
 			var slug = rtpr_slugs_array.shift();
-			//if( !$( '.rt-plugin-report-row-' + slug ).length ){
 			if( $( '.rt-plugin-report-row-temp-' + slug ).length ){
 				rtpr_get_plugin_info( slug );
 			} else {
