@@ -27,7 +27,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		/**
 		 * Constructor
 		 */
-		function __construct() {
+		public function __construct() {
 			// Intentionally left blank.
 		}
 
@@ -173,7 +173,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		/**
 		 * Get the slugs for all currently installed plugins
 		 */
-		public function get_plugin_slugs() {
+		private function get_plugin_slugs() {
 			$plugins = get_plugins();
 			$slugs   = array();
 			foreach ( $plugins as $key => $plugin ) {
@@ -186,7 +186,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		/**
 		 * Convert a plugin's file path into its slug
 		 */
-		public function get_plugin_slug( $file ) {
+		private function get_plugin_slug( $file ) {
 			if ( strpos( $file, '/' ) !== false ) {
 				$parts = explode( '/', $file );
 			} else {
@@ -243,7 +243,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 * Gather all the info we can get about a plugin.
 		 * Uses transient caching to avoid doing repo API calls on every page visit
 		 */
-		public function assemble_plugin_report( $slug ) {
+		private function assemble_plugin_report( $slug ) {
 			if ( ! empty( $slug ) ) {
 				$report    = array();
 				$cache_key = $this->create_cache_key( $slug );
@@ -304,7 +304,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		/**
 		 * From a report, generate an HTML table row with relevant data for the plugin
 		 */
-		public function render_table_row( $report ) {
+		private function render_table_row( $report ) {
 			// Get the latest WP release version number.
 			$wp_latest = $this->check_core_updates();
 			// Check if the report is valid.
@@ -345,7 +345,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		/**
 		 * Format an error message as a table row, so we can return it to javascript
 		 */
-		public function render_error_row( $message ) {
+		private function render_error_row( $message ) {
 			return '<tr class="rt-pluginreport-row-error"><td colspan="' . $this->cols_per_row . '">' . $message . '</td></tr>';
 		}
 
@@ -353,7 +353,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		/**
 		 * Figure out what CSS class to use based on current and optimal version numbers
 		 */
-		public function get_version_risk_classname( $available, $optimal ) {
+		private function get_version_risk_classname( $available, $optimal ) {
 			// If the version match, indicate low risk.
 			if ( version_compare( $available, $optimal, '==' ) ) {
 				return 'rt-risk-low';
@@ -370,7 +370,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		/**
 		 * Assess the risk associated with low ratings or poor compatibility feedback, return corresponding CSS class
 		 */
-		public function get_percentage_risk_classname( $perc ) {
+		private function get_percentage_risk_classname( $perc ) {
 			if ( $perc < 70 ) {
 				return 'rt-risk-high';
 			}
@@ -384,7 +384,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		/**
 		 * Assess the risk associated with low ratings or poor compatibility feedback, return corresponding CSS class
 		 */
-		public function get_timediff_risk_classname( $time_diff ) {
+		private function get_timediff_risk_classname( $time_diff ) {
 			$days = $time_diff / ( DAY_IN_SECONDS );
 			if ( $days > 365 ) {
 				return 'rt-risk-high';
@@ -400,7 +400,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 * Get the latest available WordPress version using WP core functions
 		 * This way, we don't need to do any API calls. WP check this periodically anyway.
 		 */
-		public function check_core_updates() {
+		private function check_core_updates() {
 			global $wp_version;
 			$update = get_preferred_from_update_core();
 			// Bail out of no valid response, or false.
@@ -419,7 +419,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		/**
 		 * Extract the major release number from a WP version nr
 		 */
-		public function major_release_version_nr( $version ) {
+		private function major_release_version_nr( $version ) {
 			$parts = explode( '.', $version );
 			$parts = array_slice( $parts, 0, 2 );
 			return implode( '.', $parts );
@@ -442,7 +442,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		/**
 		 * Clear all cached plugin info
 		 */
-		public function clear_cache() {
+		private function clear_cache() {
 			$plugins = get_plugins();
 			foreach ( $plugins as $key => $plugin ) {
 				$slug      = $this->get_plugin_slug( $key );
