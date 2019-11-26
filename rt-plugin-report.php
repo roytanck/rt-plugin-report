@@ -67,9 +67,9 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 * Render the options page
 		 */
 		public function settings_page() {
-			// Check user capabilites, just to be sure.
+			// Check user capabilities, just to be sure.
 			if ( ! current_user_can( 'manage_options' ) ) {
-				die();
+				wp_die();
 			}
 			// Assemble information we'll need.
 			global $wp_version;
@@ -204,13 +204,12 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 			// Check the ajax nonce, display an error if the check fails.
 			if ( ! check_ajax_referer( 'rt_plugin_report_nonce', 'nonce', false ) ) {
-				echo 'oops';
-				die();
+				wp_die();
 			}
 
 			// Check user capabilites, just to be sure.
 			if ( ! current_user_can( 'manage_options' ) ) {
-				die();
+				wp_die();
 			}
 
 			// Check if get_plugins() function exists.
