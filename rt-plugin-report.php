@@ -312,7 +312,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				$html = $this->render_error_row( esc_html__( 'No plugin data available.', 'plugin-report' ) );
 			} elseif ( ! isset( $report['repo_info'] ) ) {
 				/* translators: %s = Slug of the plugin  */
-				$html = $this->render_error_row( sprintf( esc_html__( 'This plugin "%s" does not appear to be in the wordpress.org repository.', 'plugin-report' ), $report['slug'] ) );
+				$html = $this->render_error_row( sprintf( esc_html__( 'The plugin "%s" does not appear to be in the wordpress.org repository.', 'plugin-report' ), $report['local_info']['Name'] ) );
 			} else {
 				$html = '<tr class="rt-plugin-report-row-' . $report['slug'] . '">';
 				// Name.
