@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       Plugin Report
- * Plugin URI:        https://roytanck.com
+ * Plugin URI:        https://roytanck.com/?p=277
  * Description:       Provides detailed information about currently installed plugins
  * Version:           1.2
  * Requires at least: 4.6
