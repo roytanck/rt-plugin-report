@@ -116,6 +116,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 			// The report's main table.
 			echo '<table id="rt-plugin-report-table" class="wp-list-table widefat fixed striped">';
+			echo '<thead>';
 			echo '<tr>';
 			echo '<th>' . esc_html__( 'Name', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Author', 'plugin-report' ) . '</th>';
@@ -124,6 +125,8 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			echo '<th>' . esc_html__( 'Tested up to WP version', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Rating', 'plugin-report' ) . '</th>';
 			echo '</tr>';
+			echo '</thead>';
+			echo '<tbody>';
 
 			foreach ( $plugins as $key => $plugin ) {
 				$slug      = $this->get_plugin_slug( $key );
@@ -138,9 +141,8 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				}
 			}
 
+			echo '</tbody>';
 			echo '</table>';
-
-			echo '<div id="rt-debug"></div>';
 
 			// Wrap up.
 			echo '</p>';
