@@ -47,6 +47,8 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_js' ) );
 			// Add the AJAX hook.
 			add_action( 'wp_ajax_rt_get_plugin_info', array( $this, 'get_plugin_info' ) );
+			// Hook into the WP Upgrader to selectively delete cache items.
+			add_action( 'upgrader_process_complete', array( $this, 'upgrade_delete_cache_items' ), 10 ,2 );
 		}
 
 
@@ -449,11 +451,38 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 * Clear all cached plugin info
 		 */
 		private function clear_cache() {
+			// Request a list of all plugins.
 			$plugins = get_plugins();
+			// Loop through the plugins array, and delete cache items.
 			foreach ( $plugins as $key => $plugin ) {
-				$slug      = $this->get_plugin_slug( $key );
+				$slug = $this->get_plugin_slug( $key );
+				$this->clear_cache_item( $slug );
+			}
+		}
+
+
+		/**
+		 * Remove the cache item for a single plugin
+		 */
+		private function clear_cache_item( $slug ) {
+			if ( isset( $slug ) ) {
 				$cache_key = $this->create_cache_key( $slug );
 				delete_site_transient( $cache_key );
+			}			
+		}
+
+
+		/**
+		 * Selectively delete cache for plugins that have been updated.
+		 */
+		public function upgrade_delete_cache_items( $upgrader, $data ) {
+			// Check if plugins have been upgraded by WP.
+			if ( isset( $data ) && is_array( $data['plugins'] ) ) {
+				// Loop through the plugins, and delete the associated cache items.
+				foreach ( $data['plugins'] as $key => $value ) {
+					$slug = $this->get_plugin_slug( $value );
+					$this->clear_cache_item( $slug );
+				}
 			}
 		}
 
