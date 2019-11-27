@@ -7,6 +7,7 @@
  * Requires at least: 4.6
  * Requires PHP:      5.6
  * Author:            Roy Tanck
+ * Author URI:        https://roytanck.com
  * License:           GPLv3
  */
 
