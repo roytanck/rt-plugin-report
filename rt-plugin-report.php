@@ -267,7 +267,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					}
 
 					// Use the wordpress.org repository API to get detailed information.
-					$args            = array(
+					$args = array(
 						'slug'   => $slug,
 						'fields' => array(
 							'description'   => false,
@@ -288,7 +288,10 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 						// Cache the report.
 						set_site_transient( $cache_key, $report, $this->cache_lifetime );
 					} else {
-						// Cache for an extra long time when the plgin is not in the repo.
+						// Store the error code and message in the report.
+						$report['repo_error_code'] = $returned_object->get_error_code();
+						$report['repo_error_message'] = $returned_object->get_error_message();
+						// Cache for an extra long time when the plugin is not in the repo.
 						set_site_transient( $cache_key, $report, $this->cache_lifetime_norepo );
 					}
 				} else {
@@ -314,8 +317,8 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			if ( $report == null ) {
 				$html = $this->render_error_row( esc_html__( 'No plugin data available.', 'plugin-report' ) );
 			} elseif ( ! isset( $report['repo_info'] ) ) {
-				/* translators: %s = Slug of the plugin  */
-				$html = $this->render_error_row( sprintf( esc_html__( 'The plugin "%s" does not appear to be in the wordpress.org repository.', 'plugin-report' ), $report['local_info']['Name'] ) );
+				/* translators: %s = Name of the plugin  */
+				$html = $this->render_error_row( sprintf( esc_html__( 'Error fetching info for "%s" from wordpress.org:', 'plugin-report' ), $report['local_info']['Name'] ) . ' ' . $report['repo_error_message'] );
 			} else {
 				$html = '<tr class="rt-plugin-report-row-' . $report['slug'] . '">';
 				// Name.
