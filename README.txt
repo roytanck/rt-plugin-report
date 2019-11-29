@@ -4,20 +4,29 @@ Tags: admin, plugins, multisite
 Requires at least: 4.6
 Tested up to: 5.3
 Requires PHP: 5.6
-Stable tag: 1.2
+Stable tag: 1.3
 License: GPLv3
 
 A WordPress plugin that provides detailed information about currently installed plugins.
 
-Plugin Report uses the wordpress.org API to get information about plugins you've installed in your WordPress site. It can be used to spot abandoned plugins, or provide a report to your client about the "plugin health" of the site.
+##Plugin Report will allow you to:
+
+* Spot plugins that are no longer maintained.
+* Get a quick overview of the "plugin health" of your site.
+* Provide clients with a detailed report, right from their own dashboard.
 
 
 == Screenshots ==
  
-1. Your plugin report is found under the Plugins menu, and in the Network section if your site is a multisite install.
+1. Your plugin report is found under the Plugins menu, or in the Network section if your site is a multisite install.
 
 
 == Changelog ==
+
+= 1.3 (2019-11-29) =
+* Better table styles, inluding call background colors
+* Improved error messages
+* Cached information is now automatically refreshed when a plugin is updated through wp-admin
 
 = 1.2 (2019-11-26) =
 * Removed the "compatibility" column (data no longer provided by API)
