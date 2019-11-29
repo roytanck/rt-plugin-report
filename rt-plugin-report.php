@@ -319,8 +319,10 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			if ( $report == null ) {
 				$html = $this->render_error_row( esc_html__( 'No plugin data available.', 'plugin-report' ) );
 			} elseif ( ! isset( $report['repo_info'] ) ) {
+				// Get the error message from the report, or use a default.
+				$error_msg = isset( $report['repo_error_message'] ) ? $report['repo_error_message'] : __( 'Unknown error', 'plugin-report' );
 				/* translators: %s = Name of the plugin  */
-				$html = $this->render_error_row( sprintf( esc_html__( 'Error fetching info for "%s" from wordpress.org:', 'plugin-report' ), $report['local_info']['Name'] ) . ' ' . $report['repo_error_message'] );
+				$html = $this->render_error_row( sprintf( esc_html__( 'Error fetching info for "%s" from wordpress.org:', 'plugin-report' ), $report['local_info']['Name'] ) . ' ' . $error_msg );
 			} else {
 				$html = '<tr class="rt-plugin-report-row-' . $report['slug'] . '">';
 				// Name.
