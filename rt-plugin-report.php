@@ -21,9 +21,15 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 	class RT_Plugin_Report {
 
-		public $cols_per_row          = 6;
-		public $cache_lifetime        = DAY_IN_SECONDS;
-		public $cache_lifetime_norepo = WEEK_IN_SECONDS;
+		// CSS class constants.
+		const CSS_CLASS_LOW  = 'rt-risk-low';
+		const CSS_CLASS_MED  = 'rt-risk-medium';
+		const CSS_CLASS_HIGH = 'rt-risk-high';
+
+		// Othe class constants
+		const COLS_PER_ROW          = 7;
+		const CACHE_LIFETIME        = DAY_IN_SECONDS;
+		const CACHE_LIFETIME_NOREPO = WEEK_IN_SECONDS;
 
 		/**
 		 * Constructor
@@ -87,7 +93,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				$last_timestamp = intval( get_site_transient( 'rt_plugin_report_cache_cleared' ) );
 				if ( ! $last_timestamp || $new_timestamp > $last_timestamp ) {
 					$this->clear_cache();
-					set_site_transient( 'rt_plugin_report_cache_cleared', $new_timestamp, $this->cache_lifetime );
+					set_site_transient( 'rt_plugin_report_cache_cleared', $new_timestamp, self::CACHE_LIFETIME );
 				}
 			}
 
@@ -122,6 +128,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			echo '<tr>';
 			echo '<th>' . esc_html__( 'Name', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Author', 'plugin-report' ) . '</th>';
+			echo '<th>' . esc_html__( 'Activated', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Installed version', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Last update', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Tested up to WP version', 'plugin-report' ) . '</th>';
@@ -139,7 +146,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					echo $this->render_table_row( $cache );
 				} else {
 					// Render a special table row that's used as a signal to the front-end js that new data is needed.
-					echo '<tr class="rt-plugin-report-row-temp-' . $slug . '"><td colspan="' . $this->cols_per_row . '">loading...</td></tr>';
+					echo '<tr class="rt-plugin-report-row-temp-' . $slug . '"><td colspan="' . self::COLS_PER_ROW . '">loading...</td></tr>';
 				}
 			}
 
@@ -264,6 +271,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					foreach ( $plugins as $key => $plugin ) {
 						if ( $this->get_plugin_slug( $key ) == $slug ) {
 							$report['local_info'] = $plugin;
+							$report['file_path'] = $key;
 							break;
 						}
 					}
@@ -288,13 +296,13 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					if ( ! is_wp_error( $returned_object ) ) {
 						$report['repo_info'] = maybe_unserialize( $returned_object );
 						// Cache the report.
-						set_site_transient( $cache_key, $report, $this->cache_lifetime );
+						set_site_transient( $cache_key, $report, self::CACHE_LIFETIME );
 					} else {
 						// Store the error code and message in the report.
 						$report['repo_error_code'] = $returned_object->get_error_code();
 						$report['repo_error_message'] = $returned_object->get_error_message();
 						// Cache for an extra long time when the plugin is not in the repo.
-						set_site_transient( $cache_key, $report, $this->cache_lifetime_norepo );
+						set_site_transient( $cache_key, $report, self::CACHE_LIFETIME_NOREPO );
 					}
 				} else {
 					$report = $cache;
@@ -330,6 +338,14 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				$html .= '<td><a href="https://wordpress.org/plugins/' . $report['slug'] . '">' . $report['repo_info']->name . '</a></td>';
 				// Author.
 				$html .= '<td>' . $report['repo_info']->author . '</td>';
+				// Activated.
+				$active = __( 'Please clear cache to update', 'plugin-report' );
+				$css_class = self::CSS_CLASS_MED;
+				if( isset( $report['file_path'] ) ){
+					$active    = is_plugin_active( $report['file_path'] ) ? __( 'Yes', 'plugin-report' ) : __( 'No', 'plugin-report' );
+					$css_class = is_plugin_active( $report['file_path'] ) ? self::CSS_CLASS_LOW : self::CSS_CLASS_HIGH;
+				}
+				$html .= '<td class="' . $css_class . '">' . $active . '</td>';
 				// Installed / available version.
 				$css_class = $this->get_version_risk_classname( $report['local_info']['Version'], $report['repo_info']->version );
 				$html .= '<td class="' . $css_class . '">';
@@ -361,7 +377,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 * Format an error message as a table row, so we can return it to javascript
 		 */
 		private function render_error_row( $message ) {
-			return '<tr class="rt-pluginreport-row-error"><td colspan="' . $this->cols_per_row . '">' . $message . '</td></tr>';
+			return '<tr class="rt-pluginreport-row-error"><td colspan="' . self::COLS_PER_ROW . '">' . $message . '</td></tr>';
 		}
 
 
@@ -371,14 +387,14 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		private function get_version_risk_classname( $available, $optimal ) {
 			// If the version match, indicate low risk.
 			if ( version_compare( $available, $optimal, '==' ) ) {
-				return 'rt-risk-low';
+				return self::CSS_CLASS_LOW;
 			}
 			// If major version match, indicate medium risk.
 			if ( version_compare( $this->major_release_version_nr( $available ), $this->major_release_version_nr( $optimal ), '==' ) ) {
-				return 'rt-risk-medium';
+				return self::CSS_CLASS_MED;
 			}
 			// Else, indicate high risk.
-			return 'rt-risk-high';
+			return self::CSS_CLASS_HIGH;
 		}
 
 
@@ -387,12 +403,12 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 */
 		private function get_percentage_risk_classname( $perc ) {
 			if ( $perc < 70 ) {
-				return 'rt-risk-high';
+				return self::CSS_CLASS_HIGH;
 			}
 			if ( $perc < 90 ) {
-				return 'rt-risk-medium';
+				return self::CSS_CLASS_MED;
 			}
-			return 'rt-risk-low';
+			return self::CSS_CLASS_LOW;
 		}
 
 
@@ -402,12 +418,12 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		private function get_timediff_risk_classname( $time_diff ) {
 			$days = $time_diff / ( DAY_IN_SECONDS );
 			if ( $days > 365 ) {
-				return 'rt-risk-high';
+				return self::CSS_CLASS_HIGH;
 			}
 			if ( $days > 90 ) {
-				return 'rt-risk-medium';
+				return self::CSS_CLASS_MED;
 			}
-			return 'rt-risk-low';
+			return self::CSS_CLASS_LOW;
 		}
 
 
