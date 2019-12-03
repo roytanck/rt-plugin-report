@@ -326,18 +326,21 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			// Check if the report is valid.
 			if ( $report == null ) {
 				$html = $this->render_error_row( esc_html__( 'No plugin data available.', 'plugin-report' ) );
-			} elseif ( ! isset( $report['repo_info'] ) ) {
-				// Get the error message from the report, or use a default.
-				$error_msg = isset( $report['repo_error_message'] ) ? $report['repo_error_message'] : __( 'Unknown error', 'plugin-report' );
-				/* translators: %s = Name of the plugin  */
-				$html = $this->render_error_row( sprintf( esc_html__( 'Error fetching info for "%s" from wordpress.org:', 'plugin-report' ), $report['local_info']['Name'] ) . ' ' . $error_msg );
 			} else {
 				// Start the new table row.
 				$html = '<tr class="rt-plugin-report-row-' . $report['slug'] . '">';
 				// Name.
-				$html .= '<td><a href="https://wordpress.org/plugins/' . $report['slug'] . '">' . $report['repo_info']->name . '</a></td>';
+				if( isset( $report['local_info']['PluginURI'] ) && !empty( $report['local_info']['PluginURI'] ) ){
+					$html .= '<td><a href="' . $report['local_info']['PluginURI'] . '"><strong>' . $report['local_info']['Name'] . '</strong></a></td>';
+				} else {
+					$html .= '<td><strong>' . $report['local_info']['Name'] . '</strong></td>';
+				}
 				// Author.
-				$html .= '<td>' . $report['repo_info']->author . '</td>';
+				if( isset( $report['local_info']['AuthorURI'] ) && !empty( $report['local_info']['AuthorURI'] ) ){
+					$html .= '<td><a href="' . $report['local_info']['AuthorURI'] . '">' . $report['local_info']['Author'] . '</a></td>';
+				} else {
+					$html .= '<td>' . $report['local_info']['Author'] . '</td>';
+				}
 				// Activated.
 				$active = __( 'Please clear cache to update', 'plugin-report' );
 				$css_class = self::CSS_CLASS_MED;
@@ -347,25 +350,41 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				}
 				$html .= '<td class="' . $css_class . '">' . $active . '</td>';
 				// Installed / available version.
-				$css_class = $this->get_version_risk_classname( $report['local_info']['Version'], $report['repo_info']->version );
-				$html .= '<td class="' . $css_class . '">';
-				$html .= $report['local_info']['Version'];
-				if ( $report['local_info']['Version'] != $report['repo_info']->version ) {
-					$html .= '<span class="rt-additional-info">(' . $report['repo_info']->version . ' available)</span>';
+				if( isset( $report['repo_info'] ) ){
+					$css_class = $this->get_version_risk_classname( $report['local_info']['Version'], $report['repo_info']->version );
+					$html .= '<td class="' . $css_class . '">';
+					$html .= $report['local_info']['Version'];
+					if ( $report['local_info']['Version'] != $report['repo_info']->version ) {
+						$html .= '<span class="rt-additional-info">(' . $report['repo_info']->version . ' available)</span>';
+					}
+					$html .= '</td>';
+				} else {
+					$html .= '<td>' . $report['local_info']['Version'] . '</td>';
 				}
-				$html .= '</td>';
 				// Last updates.
-				$time_update = new DateTime( $report['repo_info']->last_updated );
-				$time_diff   = human_time_diff( $time_update->getTimestamp(), current_time( 'timestamp' ) );
-				$css_class   = $this->get_timediff_risk_classname( current_time( 'timestamp' ) - $time_update->getTimestamp() );
-				$html       .= '<td class="' . $css_class . '">' . $time_diff . '</td>';
+				if( isset( $report['repo_info'] ) ){
+					$time_update = new DateTime( $report['repo_info']->last_updated );
+					$time_diff   = human_time_diff( $time_update->getTimestamp(), current_time( 'timestamp' ) );
+					$css_class   = $this->get_timediff_risk_classname( current_time( 'timestamp' ) - $time_update->getTimestamp() );
+					$html       .= '<td class="' . $css_class . '">' . $time_diff . '</td>';
+				} else {
+					$html .= $this->render_error_cell();
+				}
 				// Tested up to.
-				$css_class = $this->get_version_risk_classname( $report['repo_info']->tested, $wp_latest );
-				$html .= '<td class="' . $css_class . '">' . $report['repo_info']->tested . '</td>';
+				if( isset( $report['repo_info'] ) ){
+					$css_class = $this->get_version_risk_classname( $report['repo_info']->tested, $wp_latest );
+					$html .= '<td class="' . $css_class . '">' . $report['repo_info']->tested . '</td>';
+				} else {
+					$html .= $this->render_error_cell();
+				}
 				// Overall user rating.
-				$css_class  = ( intval( $report['repo_info']->num_ratings ) > 0 ) ? $this->get_percentage_risk_classname( intval( $report['repo_info']->rating ) ) : '';
-				$value_text = ( ( intval( $report['repo_info']->num_ratings ) > 0 ) ? $report['repo_info']->rating . '%' : esc_html__( 'No data available', 'plugin-report' ) );
-				$html      .= '<td class="' . $css_class . '">' . $value_text . '</td>';
+				if( isset( $report['repo_info'] ) ){
+					$css_class  = ( intval( $report['repo_info']->num_ratings ) > 0 ) ? $this->get_percentage_risk_classname( intval( $report['repo_info']->rating ) ) : '';
+					$value_text = ( ( intval( $report['repo_info']->num_ratings ) > 0 ) ? $report['repo_info']->rating . '%' : esc_html__( 'No data available', 'plugin-report' ) );
+					$html      .= '<td class="' . $css_class . '">' . $value_text . '</td>';
+				} else {
+					$html .= $this->render_error_cell();
+				}
 				// Close the new table row.
 				$html .= '</tr>';
 			}
@@ -378,6 +397,17 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 */
 		private function render_error_row( $message ) {
 			return '<tr class="rt-pluginreport-row-error"><td colspan="' . self::COLS_PER_ROW . '">' . $message . '</td></tr>';
+		}
+
+
+		/**
+		 * Format an error message as a table cell, so we can return it to javascript
+		 */
+		private function render_error_cell( $message = null ) {
+			if( !$message ){
+				$message = esc_html__( 'No data available', 'plugin-report' );
+			}
+			return '<td class="rt-pluginreport-cell-error">' . $message . '</td>';
 		}
 
 
