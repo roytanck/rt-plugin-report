@@ -530,7 +530,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 */
 		public function upgrade_delete_cache_items( $upgrader, $data ) {
 			// Check if plugins have been upgraded by WP.
-			if ( isset( $data ) && is_array( $data['plugins'] ) ) {
+			if ( isset( $data ) && isset( $data['plugins'] ) && is_array( $data['plugins'] ) ) {
 				// Loop through the plugins, and delete the associated cache items.
 				foreach ( $data['plugins'] as $key => $value ) {
 					$slug = $this->get_plugin_slug( $value );
