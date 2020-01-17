@@ -2,9 +2,9 @@
 Contributors: roytanck, zodiac1978
 Tags: admin, plugins, multisite
 Requires at least: 4.6
-Tested up to: 5.3
+Tested up to: 5.3.2
 Requires PHP: 5.6
-Stable tag: 1.3
+Stable tag: 1.4
 License: GPLv3
 
 A WordPress plugin that provides detailed information about currently installed plugins.
@@ -22,6 +22,10 @@ A WordPress plugin that provides detailed information about currently installed 
 
 
 == Changelog ==
+
+= 1.4 (2020-01-17) =
+* Adds an .xls export function (experimental)
+* Adds an "activated" column to the report table
 
 = 1.3 (2019-11-29) =
 * Better table styles, inluding call background colors
