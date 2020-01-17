@@ -45,4 +45,49 @@ jQuery(document).ready( function( $ ){
 	// kick things off
 	rtpr_process_next_plugin();
 
+
+	// Create the export button.
+	$('#rt-plugin-report-buttons').append('<button class="button" href="#" id="rt-plugin-report-export-btn">' + rt_plugin_report_vars.export_btn + '</button>');
+
+	// Export button event handler.
+	$('#rt-plugin-report-export-btn').click( function( e ){
+
+		// Create a backup of the table's html markup.
+		var table_backup = $('#rt-plugin-report-table').html();
+
+		// Attempt to put local styles in elements with known CSS classes.
+		$('td.rt-risk-low').attr( 'style', 'background-color: #dfd; color: #090 !important; font-weight: bold;' );
+		$('td.rt-risk-high').attr( 'style', 'background-color: #fdd; color: #c00 !important; font-weight: bold;' );
+		$('td.rt-risk-med').attr( 'style', 'font-weight: bold;' );
+
+		// Call the function that does the exporting.
+		rtpr_export_table();
+
+		// Restore the backup.
+		$('#rt-plugin-report-table').html( table_backup );
+	});
+
+
+	// Export function based on https://stackoverflow.com/a/27843359 .
+	function rtpr_export_table(){
+		var table_html = $('#rt-plugin-report-table').html();
+		var uri = 'data:application/vnd.ms-excel;charset=UTF-8;base64,';
+		var template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>';
+		var format = function(s, c) {
+			return s.replace(/{(\w+)}/g, function(m, p) {
+				return c[p];
+			})
+		};
+		var ctx = {
+			worksheet: 'Worksheet',
+			table: table_html
+		}
+		var link = document.createElement( 'a' );
+		var now = new Date();
+		link.download = 'plugin-report-' + now.getFullYear() + '-' + String( '0' + now.getMonth() ).slice(-2) + '-' + String( '0' + now.getDate() ).slice(-2) + '.xls';
+		link.href = uri + btoa( format( template, ctx ) );
+		link.click();
+		link.remove();
+	}
+
 });

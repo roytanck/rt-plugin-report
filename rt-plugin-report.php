@@ -152,9 +152,11 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 			echo '</tbody>';
 			echo '</table>';
+			echo '</p>';
+
+			echo '<p id="rt-plugin-report-buttons"></p>';
 
 			// Wrap up.
-			echo '</p>';
 			echo '</div>';
 		}
 
@@ -175,6 +177,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			$vars      = array(
 				'plugin_slugs' => $slugs_str,
 				'ajax_nonce'   => wp_create_nonce( 'rt_plugin_report_nonce' ),
+				'export_btn'   => __( 'Export .xls file', 'plugin-report' ),
 			);
 			wp_localize_script( 'rt-plugin-report-js', 'rt_plugin_report_vars', $vars );
 			// Enqueue admin CSS file.
@@ -355,7 +358,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$html .= '<td class="' . $css_class . '">';
 					$html .= $report['local_info']['Version'];
 					if ( $report['local_info']['Version'] != $report['repo_info']->version ) {
-						$html .= '<span class="rt-additional-info">(' . $report['repo_info']->version . ' available)</span>';
+						$html .= ' <span class="rt-additional-info">(' . $report['repo_info']->version . ' available)</span>';
 					}
 					$html .= '</td>';
 				} else {
