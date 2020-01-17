@@ -358,7 +358,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$html .= '<td class="' . $css_class . '">';
 					$html .= $report['local_info']['Version'];
 					if ( $report['local_info']['Version'] != $report['repo_info']->version ) {
-						$html .= '<span class="rt-additional-info">(' . $report['repo_info']->version . ' available)</span>';
+						$html .= ' <span class="rt-additional-info">(' . $report['repo_info']->version . ' available)</span>';
 					}
 					$html .= '</td>';
 				} else {
