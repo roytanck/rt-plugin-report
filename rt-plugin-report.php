@@ -63,8 +63,8 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 */
 		public function register_settings_page() {
 			add_plugins_page(
-				esc_html__( 'Plugin Report', 'plugin-report' ),
-				esc_html__( 'Plugin Report', 'plugin-report' ),
+				esc_html_x( 'Plugin Report', 'Page and menu title', 'plugin-report' ),
+				esc_html_x( 'Plugin Report', 'Page and menu title', 'plugin-report' ),
 				'manage_options',
 				'rt_plugin_report',
 				array( $this, 'settings_page' )
@@ -99,7 +99,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 			// Start the page's output.
 			echo '<div class="wrap">';
-			echo '<h1>' . esc_html__( 'Plugin Report', 'plugin-report' ) . '</h1>';
+			echo '<h1>' . esc_html_x( 'Plugin Report', 'Page and menu title', 'plugin-report' ) . '</h1>';
 			echo '<p>';
 			$version_temp = '<span class="' . $this->get_version_risk_classname( $wp_version, $wp_latest ) . '">' . $wp_version . '</span>';
 			/* translators: %s = Current WordPress version number */
@@ -146,7 +146,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					echo $this->render_table_row( $cache );
 				} else {
 					// Render a special table row that's used as a signal to the front-end js that new data is needed.
-					echo '<tr class="rt-plugin-report-row-temp-' . $slug . '"><td colspan="' . self::COLS_PER_ROW . '">loading...</td></tr>';
+					echo '<tr class="rt-plugin-report-row-temp-' . $slug . '"><td colspan="' . self::COLS_PER_ROW . '">' . esc_html__( 'Loading...', 'plugin-report' ) . '</td></tr>';
 				}
 			}
 
