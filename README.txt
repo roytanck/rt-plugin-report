@@ -4,7 +4,7 @@ Tags: admin, plugins, multisite
 Requires at least: 4.6
 Tested up to: 5.3.2
 Requires PHP: 5.6
-Stable tag: 1.4
+Stable tag: 1.5
 License: GPLv3
 
 A WordPress plugin that provides detailed information about currently installed plugins.
@@ -13,7 +13,8 @@ A WordPress plugin that provides detailed information about currently installed 
 
 * Spot plugins that are no longer maintained.
 * Get a quick overview of the "plugin health" of your site.
-* Provide clients with a detailed report, right from their own dashboard.
+* Provide clients with a detailed report, right from their own dashboard, or as .xls spreadsheet.
+* Find plugins that are no longer active on multisite installs
 
 
 == Screenshots ==
@@ -22,6 +23,10 @@ A WordPress plugin that provides detailed information about currently installed 
 
 
 == Changelog ==
+
+= 1.5 (2020-02-09) =
+* The activation column now shows the number of activations on multisite
+* I18n improvements (thanks @pedromendonca!)
 
 = 1.4 (2020-01-17) =
 * Adds an .xls export function (experimental)
