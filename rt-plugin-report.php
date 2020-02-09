@@ -358,7 +358,8 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$html .= '<td class="' . $css_class . '">';
 					$html .= $report['local_info']['Version'];
 					if ( $report['local_info']['Version'] != $report['repo_info']->version ) {
-						$html .= ' <span class="rt-additional-info">(' . $report['repo_info']->version . ' available)</span>';
+						/* translators: %s: Version number. */
+						$html .= ' <span class="rt-additional-info">' . sprintf( esc_html__( '(%s available)', 'plugin-report'), $report['repo_info']->version ) . '</span>';
 					}
 					$html .= '</td>';
 				} else {
