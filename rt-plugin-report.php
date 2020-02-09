@@ -347,11 +347,22 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				// Activated.
 				$active = __( 'Please clear cache to update', 'plugin-report' );
 				$css_class = self::CSS_CLASS_MED;
-				if( isset( $report['file_path'] ) ){
-					$active    = is_plugin_active( $report['file_path'] ) ? __( 'Yes', 'plugin-report' ) : __( 'No', 'plugin-report' );
-					$css_class = is_plugin_active( $report['file_path'] ) ? self::CSS_CLASS_LOW : self::CSS_CLASS_HIGH;
+				if( is_multisite() ){
+					$activation_status = $this->get_multisite_activation( $report['file_path'] );
+					if( $activation_status['network'] === true ){
+						$css_class = self::CSS_CLASS_LOW;
+						$html .= '<td class="' . $css_class . '">' . __( 'Network activated', 'plugin-report' ) . '</td>';
+					} else {
+						$css_class = ( $activation_status['active'] > 0 ) ? self::CSS_CLASS_LOW : self::CSS_CLASS_HIGH;
+						$html .= '<td class="' . $css_class . '">' . $activation_status['active'] . '/' . $activation_status['sites'] . '</td>';
+					}
+				} else {
+					if( isset( $report['file_path'] ) ){
+						$active    = is_plugin_active( $report['file_path'] ) ? __( 'Yes', 'plugin-report' ) : __( 'No', 'plugin-report' );
+						$css_class = is_plugin_active( $report['file_path'] ) ? self::CSS_CLASS_LOW : self::CSS_CLASS_HIGH;
+					}
+					$html .= '<td class="' . $css_class . '">' . $active . '</td>';
 				}
-				$html .= '<td class="' . $css_class . '">' . $active . '</td>';
 				// Installed / available version.
 				if( isset( $report['repo_info'] ) ){
 					$css_class = $this->get_version_risk_classname( $report['local_info']['Version'], $report['repo_info']->version );
@@ -487,6 +498,46 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			$parts = explode( '.', $version );
 			$parts = array_slice( $parts, 0, 2 );
 			return implode( '.', $parts );
+		}
+
+
+		/**
+		 * Gather statistics about a plugin's activation on a multisite install
+		 */
+		private function get_multisite_activation( $path ){
+			// Create an array to contain the return values.
+			$activation_status = array(
+				'network' => false,
+				'active'  => 0,
+				'sites'   => 1,
+			);
+			// Check if the plugin is network activated.
+			$network_plugins = get_site_option( 'active_sitewide_plugins', null );
+			if( array_key_exists( $path, $network_plugins ) ){
+				$activation_status['network'] = true;
+			} else {
+				// Get a list of all sites in the multisite install.
+				$args = array(
+					'number' => 9999,
+					'fields' => 'ids',
+				);
+				$sites = get_sites( $args );
+				// Add the total number of sites to the return array.
+				$activation_status['sites'] = count( $sites );
+				// Loop through the sites to find where the plugin is active.
+				foreach( $sites as $site_id ){
+					$plugins = get_blog_option( $site_id, 'active_plugins', null );
+					if( $plugins ){
+						foreach( $plugins as $plugin_path ){
+							if( $plugin_path === $path ){
+								$activation_status['active']++;
+							}
+						}
+					}
+				}
+			}
+			// Return the data we gathered.
+			return $activation_status;
 		}
 
 
