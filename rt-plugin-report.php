@@ -102,8 +102,8 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			echo '<h1>' . esc_html_x( 'Plugin Report', 'Page and menu title', 'plugin-report' ) . '</h1>';
 			echo '<p>';
 			$version_temp = '<span class="' . $this->get_version_risk_classname( $wp_version, $wp_latest ) . '">' . $wp_version . '</span>';
-			/* translators: %s = Current WordPress version number */
-			echo sprintf( __( 'Currently running WordPress version: %s.', 'plugin-report' ), $version_temp );
+			/* translators: %1$s: Current WordPress version number, %2$s: Current PHP version number */
+			echo sprintf( __( 'Currently running WordPress version %1$s and PHP version %2$s.', 'plugin-report' ), $version_temp, phpversion() );
 			if ( version_compare( $wp_version, $wp_latest, '<' ) ) {
 				/* translators: %s = Available new version number */
 				echo sprintf( ' (' . esc_html__( 'An upgrade to %s is available', 'plugin-report' ) . ')', $wp_latest );
@@ -289,6 +289,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 							'version'       => true,
 							'tested'        => true,
 							'requires'      => true,
+							'requires_php'  => true,
 							'compatibility' => true,
 							'author'        => true,
 						),
@@ -368,9 +369,29 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$css_class = $this->get_version_risk_classname( $report['local_info']['Version'], $report['repo_info']->version );
 					$html .= '<td class="' . $css_class . '">';
 					$html .= $report['local_info']['Version'];
+					// Check is current version is not the stabel version from the repo.
 					if ( $report['local_info']['Version'] != $report['repo_info']->version ) {
-						/* translators: %s: Version number. */
-						$html .= ' <span class="rt-additional-info">' . sprintf( esc_html__( '(%s available)', 'plugin-report'), $report['repo_info']->version ) . '</span>';
+						// Get current version of the platform.
+						global $wp_version;
+						$php_installed = '5.1';//phpversion();
+						$wp_installed = '4.5';//$wp_version;
+						// Any upgrades needed?
+						$needs_php_upgrade = version_compare( $php_installed, $report['repo_info']->requires_php, '<' );
+						$needs_wp_upgrade = version_compare( $wp_installed, $report['repo_info']->requires, '<' );
+						// Create the additional message.
+						if( $needs_wp_upgrade && $needs_php_upgrade ){
+							/* translators: %1$s: Plugin version number, %2$s: WP version number, %3$s: PHP version number */
+							$html .= ' <span class="rt-additional-info">' . sprintf( esc_html__( '(%1$s available, but requires WordPress version %2$s and PHP version %3$s)', 'plugin-report'), $report['repo_info']->version, $report['repo_info']->requires, $report['repo_info']->requires_php ) . '</span>';
+						} elseif( $needs_wp_upgrade ) {
+							/* translators: %1$s: Plugin version number, %2$s: WP version number. */
+							$html .= ' <span class="rt-additional-info">' . sprintf( esc_html__( '(%1$s available, but requires WordPress version %2$s)', 'plugin-report'), $report['repo_info']->version, $report['repo_info']->requires ) . '</span>';
+						} elseif( $needs_php_upgrade ){
+							/* translators: %1$s: Plugin version number, %2$s: PHP version number. */
+							$html .= ' <span class="rt-additional-info">' . sprintf( esc_html__( '(%1$s available, but requires PHP version %2$s)', 'plugin-report'), $report['repo_info']->version, $report['repo_info']->requires_php ) . '</span>';
+						} else {
+							/* translators: %s: Plugin version number. */
+							$html .= ' <span class="rt-additional-info">' . sprintf( esc_html__( '(%s available)', 'plugin-report'), $report['repo_info']->version ) . '</span>';
+						}
 					}
 					$html .= '</td>';
 				} else {
