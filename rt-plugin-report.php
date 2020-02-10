@@ -434,10 +434,6 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			if ( version_compare( $available, $optimal, '==' ) ) {
 				return self::CSS_CLASS_LOW;
 			}
-			// If major version match, indicate medium risk.
-			if ( version_compare( $this->major_release_version_nr( $available ), $this->major_release_version_nr( $optimal ), '==' ) ) {
-				return self::CSS_CLASS_MED;
-			}
 			// Else, indicate high risk.
 			return self::CSS_CLASS_HIGH;
 		}
@@ -489,16 +485,6 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			}
 			// Return the preferred update's version number.
 			return $update->version;
-		}
-
-
-		/**
-		 * Extract the major release number from a WP version nr
-		 */
-		private function major_release_version_nr( $version ) {
-			$parts = explode( '.', $version );
-			$parts = array_slice( $parts, 0, 2 );
-			return implode( '.', $parts );
 		}
 
 
