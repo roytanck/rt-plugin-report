@@ -381,13 +381,13 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 						// Create the additional message.
 						if( $needs_wp_upgrade && $needs_php_upgrade ){
 							/* translators: %1$s: Plugin version number, %2$s: WP version number, %3$s: PHP version number */
-							$html .= ' <span class="rt-additional-info">' . sprintf( esc_html__( '(%1$s available, but requires WordPress version %2$s and PHP version %3$s)', 'plugin-report'), $report['repo_info']->version, $report['repo_info']->requires, $report['repo_info']->requires_php ) . '</span>';
+							$html .= ' <span class="rt-additional-info">' . sprintf( esc_html__( '(%1$s available, requires WP %2$s and PHP %3$s)', 'plugin-report'), $report['repo_info']->version, $report['repo_info']->requires, $report['repo_info']->requires_php ) . '</span>';
 						} elseif( $needs_wp_upgrade ) {
 							/* translators: %1$s: Plugin version number, %2$s: WP version number. */
-							$html .= ' <span class="rt-additional-info">' . sprintf( esc_html__( '(%1$s available, but requires WordPress version %2$s)', 'plugin-report'), $report['repo_info']->version, $report['repo_info']->requires ) . '</span>';
+							$html .= ' <span class="rt-additional-info">' . sprintf( esc_html__( '(%1$s available, requires WP %2$s)', 'plugin-report'), $report['repo_info']->version, $report['repo_info']->requires ) . '</span>';
 						} elseif( $needs_php_upgrade ){
 							/* translators: %1$s: Plugin version number, %2$s: PHP version number. */
-							$html .= ' <span class="rt-additional-info">' . sprintf( esc_html__( '(%1$s available, but requires PHP version %2$s)', 'plugin-report'), $report['repo_info']->version, $report['repo_info']->requires_php ) . '</span>';
+							$html .= ' <span class="rt-additional-info">' . sprintf( esc_html__( '(%1$s available, requires PHP %2$s)', 'plugin-report'), $report['repo_info']->version, $report['repo_info']->requires_php ) . '</span>';
 						} else {
 							/* translators: %s: Plugin version number. */
 							$html .= ' <span class="rt-additional-info">' . sprintf( esc_html__( '(%s available)', 'plugin-report'), $report['repo_info']->version ) . '</span>';
