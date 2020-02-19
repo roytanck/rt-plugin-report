@@ -22,11 +22,11 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 	class RT_Plugin_Report {
 
 		// CSS class constants.
-		const CSS_CLASS_LOW  = 'rt-risk-low';
-		const CSS_CLASS_MED  = 'rt-risk-medium';
-		const CSS_CLASS_HIGH = 'rt-risk-high';
+		const CSS_CLASS_LOW  = 'pr-risk-low';
+		const CSS_CLASS_MED  = 'pr-risk-medium';
+		const CSS_CLASS_HIGH = 'pr-risk-high';
 
-		// Othe class constants
+		// Other class constants.
 		const COLS_PER_ROW          = 7;
 		const CACHE_LIFETIME        = DAY_IN_SECONDS;
 		const CACHE_LIFETIME_NOREPO = WEEK_IN_SECONDS;
@@ -66,7 +66,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				esc_html_x( 'Plugin Report', 'Page and menu title', 'plugin-report' ),
 				esc_html_x( 'Plugin Report', 'Page and menu title', 'plugin-report' ),
 				'manage_options',
-				'rt_plugin_report',
+				'plugin_report',
 				array( $this, 'settings_page' )
 			);
 		}
@@ -90,10 +90,10 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			// Refresh the cache, but only if this is a fresh timestamp (not if the page has been refreshed with the timestamp still in the URL).
 			if ( isset( $_GET['clear_cache'] ) ) {
 				$new_timestamp  = intval( $_GET['clear_cache'] );
-				$last_timestamp = intval( get_site_transient( 'rt_plugin_report_cache_cleared' ) );
+				$last_timestamp = intval( get_site_transient( 'plugin_report_cache_cleared' ) );
 				if ( ! $last_timestamp || $new_timestamp > $last_timestamp ) {
 					$this->clear_cache();
-					set_site_transient( 'rt_plugin_report_cache_cleared', $new_timestamp, self::CACHE_LIFETIME );
+					set_site_transient( 'plugin_report_cache_cleared', $new_timestamp, self::CACHE_LIFETIME );
 				}
 			}
 
@@ -112,18 +112,18 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			echo '<p>';
 			// Clear cache and reload.
 			if ( is_multisite() ) {
-				$page_url = 'network/plugins.php?page=rt_plugin_report';
+				$page_url = 'network/plugins.php?page=plugin_report';
 			} else {
-				$page_url = 'plugins.php?page=rt_plugin_report';
+				$page_url = 'plugins.php?page=plugin_report';
 			}
 			echo '<a href="' . admin_url( $page_url . '&clear_cache=' . current_time( 'timestamp' ) ) . '">' . esc_html__( 'Clear cached plugin data and reload', 'plugin-report' ) . '</a>';
 			echo '</p>';
 			echo '<h3>' . esc_html__( 'Currently installed plugins', 'plugin-report' ) . '</h3>';
-			echo '<p id="rt-plugin-report-progress"></p>';
+			echo '<p id="plugin-report-progress"></p>';
 			echo '<p>';
 
 			// The report's main table.
-			echo '<table id="rt-plugin-report-table" class="wp-list-table widefat fixed striped">';
+			echo '<table id="plugin-report-table" class="wp-list-table widefat fixed striped">';
 			echo '<thead>';
 			echo '<tr>';
 			echo '<th>' . esc_html__( 'Name', 'plugin-report' ) . '</th>';
@@ -146,7 +146,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					echo $this->render_table_row( $cache );
 				} else {
 					// Render a special table row that's used as a signal to the front-end js that new data is needed.
-					echo '<tr class="rt-plugin-report-row-temp-' . $slug . '"><td colspan="' . self::COLS_PER_ROW . '">' . esc_html__( 'Loading...', 'plugin-report' ) . '</td></tr>';
+					echo '<tr class="plugin-report-row-temp-' . $slug . '"><td colspan="' . self::COLS_PER_ROW . '">' . esc_html__( 'Loading...', 'plugin-report' ) . '</td></tr>';
 				}
 			}
 
@@ -154,7 +154,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			echo '</table>';
 			echo '</p>';
 
-			echo '<p id="rt-plugin-report-buttons"></p>';
+			echo '<p id="plugin-report-buttons"></p>';
 
 			// Wrap up.
 			echo '</div>';
@@ -166,22 +166,22 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 */
 		public function enqueue_js( $hook ) {
 			// Check if we're on the right screen.
-			if ( 'plugins_page_rt_plugin_report' != $hook ) {
+			if ( 'plugins_page_plugin_report' != $hook ) {
 				return;
 			}
 			// register the plugin's admin js, and require jquery
-			wp_enqueue_script( 'rt-plugin-report-js', plugins_url( '/js/rt-plugin-report.js', __FILE__ ), array( 'jquery' ) );
+			wp_enqueue_script( 'plugin-report-js', plugins_url( '/js/plugin-report.js', __FILE__ ), array( 'jquery' ) );
 			// add some variables to the page, to be used by the javascript
 			$slugs     = $this->get_plugin_slugs();
 			$slugs_str = implode( ',', $slugs );
 			$vars      = array(
 				'plugin_slugs' => $slugs_str,
-				'ajax_nonce'   => wp_create_nonce( 'rt_plugin_report_nonce' ),
+				'ajax_nonce'   => wp_create_nonce( 'plugin_report_nonce' ),
 				'export_btn'   => __( 'Export .xls file', 'plugin-report' ),
 			);
-			wp_localize_script( 'rt-plugin-report-js', 'rt_plugin_report_vars', $vars );
+			wp_localize_script( 'plugin-report-js', 'plugin_report_vars', $vars );
 			// Enqueue admin CSS file.
-			wp_enqueue_style( 'rt-plugin-report-css', plugin_dir_url( __FILE__ ) . 'css/rt-plugin-report.css' );
+			wp_enqueue_style( 'plugin-report-css', plugin_dir_url( __FILE__ ) . 'css/plugin-report.css' );
 		}
 
 
@@ -218,7 +218,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		public function get_plugin_info() {
 
 			// Check the ajax nonce, display an error if the check fails.
-			if ( ! check_ajax_referer( 'rt_plugin_report_nonce', 'nonce', false ) ) {
+			if ( ! check_ajax_referer( 'plugin_report_nonce', 'nonce', false ) ) {
 				wp_die();
 			}
 
@@ -331,7 +331,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				$html = $this->render_error_row( esc_html__( 'No plugin data available.', 'plugin-report' ) );
 			} else {
 				// Start the new table row.
-				$html = '<tr class="rt-plugin-report-row-' . $report['slug'] . '">';
+				$html = '<tr class="plugin-report-row-' . $report['slug'] . '">';
 				// Name.
 				if( isset( $report['local_info']['PluginURI'] ) && !empty( $report['local_info']['PluginURI'] ) ){
 					$html .= '<td><a href="' . $report['local_info']['PluginURI'] . '"><strong>' . $report['local_info']['Name'] . '</strong></a></td>';
@@ -370,7 +370,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$html .= $report['local_info']['Version'];
 					if ( $report['local_info']['Version'] != $report['repo_info']->version ) {
 						/* translators: %s: Version number. */
-						$html .= ' <span class="rt-additional-info">' . sprintf( esc_html__( '(%s available)', 'plugin-report'), $report['repo_info']->version ) . '</span>';
+						$html .= ' <span class="pr-additional-info">' . sprintf( esc_html__( '(%s available)', 'plugin-report'), $report['repo_info']->version ) . '</span>';
 					}
 					$html .= '</td>';
 				} else {
@@ -411,7 +411,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 * Format an error message as a table row, so we can return it to javascript
 		 */
 		private function render_error_row( $message ) {
-			return '<tr class="rt-pluginreport-row-error"><td colspan="' . self::COLS_PER_ROW . '">' . $message . '</td></tr>';
+			return '<tr class="pluginreport-row-error"><td colspan="' . self::COLS_PER_ROW . '">' . $message . '</td></tr>';
 		}
 
 
@@ -422,7 +422,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			if( !$message ){
 				$message = esc_html__( 'No data available', 'plugin-report' );
 			}
-			return '<td class="rt-pluginreport-cell-error">' . $message . '</td>';
+			return '<td class="pluginreport-cell-error">' . $message . '</td>';
 		}
 
 
@@ -583,7 +583,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 	}
 
 	// Instantiate the class.
-	$rt_plugin_report_instance = new RT_Plugin_Report();
-	$rt_plugin_report_instance->init();
+	$plugin_report_instance = new RT_Plugin_Report();
+	$plugin_report_instance->init();
 
 }
