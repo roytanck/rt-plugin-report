@@ -27,6 +27,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		const CSS_CLASS_HIGH = 'pr-risk-high';
 
 		// Other class constants.
+		const PLUGIN_VERSION        = '1.5';
 		const COLS_PER_ROW          = 7;
 		const CACHE_LIFETIME        = DAY_IN_SECONDS;
 		const CACHE_LIFETIME_NOREPO = WEEK_IN_SECONDS;
@@ -50,7 +51,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				add_action( 'admin_menu', array( $this, 'register_settings_page' ) );
 			}
 			// Hook for the admin js.
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_js' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 			// Add the AJAX hook.
 			add_action( 'wp_ajax_rt_get_plugin_info', array( $this, 'get_plugin_info' ) );
 			// Hook into the WP Upgrader to selectively delete cache items.
@@ -164,13 +165,13 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		/**
 		 * Enqueue admin javascript
 		 */
-		public function enqueue_js( $hook ) {
+		public function enqueue_assets( $hook ) {
 			// Check if we're on the right screen.
 			if ( 'plugins_page_plugin_report' != $hook ) {
 				return;
 			}
 			// register the plugin's admin js, and require jquery
-			wp_enqueue_script( 'plugin-report-js', plugins_url( '/js/plugin-report.js', __FILE__ ), array( 'jquery' ) );
+			wp_enqueue_script( 'plugin-report-js', plugins_url( '/js/plugin-report.js', __FILE__ ), array( 'jquery' ), self::PLUGIN_VERSION );
 			// add some variables to the page, to be used by the javascript
 			$slugs     = $this->get_plugin_slugs();
 			$slugs_str = implode( ',', $slugs );
@@ -181,7 +182,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			);
 			wp_localize_script( 'plugin-report-js', 'plugin_report_vars', $vars );
 			// Enqueue admin CSS file.
-			wp_enqueue_style( 'plugin-report-css', plugin_dir_url( __FILE__ ) . 'css/plugin-report.css' );
+			wp_enqueue_style( 'plugin-report-css', plugin_dir_url( __FILE__ ) . 'css/plugin-report.css', array(), self::PLUGIN_VERSION );
 		}
 
 
