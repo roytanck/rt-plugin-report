@@ -448,8 +448,8 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 * Figure out what CSS class to use based on current and optimal version numbers
 		 */
 		private function get_version_risk_classname( $available, $optimal ) {
-			// If the version match, indicate low risk.
-			if ( version_compare( $available, $optimal, '==' ) ) {
+			// If the version is equal or higher, indicate low risk.
+			if ( version_compare( $available, $optimal, '>=' ) ) {
 				return self::CSS_CLASS_LOW;
 			}
 			// Else, indicate high risk.
