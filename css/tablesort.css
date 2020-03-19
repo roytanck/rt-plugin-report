@@ -27,7 +27,11 @@ th[aria-sort]:not(.no-sort):after {
 	opacity: 0.4;
 }
 
-th[role=columnheader]:not(.no-sort):hover:after {
+th[role=columnheader]:not(.no-sort):not([data-sort-method="none"]):hover:after {
 	visibility: visible;
 	opacity: 1;
+}
+
+th[data-sort-method="none"] {
+	cursor: not-allowed !important;
 }
