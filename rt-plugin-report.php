@@ -550,7 +550,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 * Create a cache key that is unique to the provided plugin slug.
 		 */
 		private function create_cache_key( $slug ) {
-			// Create a hash for the plugiin slug.
+			// Create a hash for the plugin slug.
 			$slug_hash = hash( 'sha256', $slug );
 			// Prefix and limit the string to 40 characters to avoid issues with long keys.
 			$cache_key = 'rtpr_' . substr( $slug_hash, 0, 35 );
