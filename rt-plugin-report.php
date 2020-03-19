@@ -55,7 +55,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			// Add the AJAX hook.
 			add_action( 'wp_ajax_rt_get_plugin_info', array( $this, 'get_plugin_info' ) );
 			// Hook into the WP Upgrader to selectively delete cache items.
-			add_action( 'upgrader_process_complete', array( $this, 'upgrade_delete_cache_items' ), 10 ,2 );
+			add_action( 'upgrader_process_complete', array( $this, 'upgrade_delete_cache_items' ), 10, 2 );
 		}
 
 
@@ -167,12 +167,12 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 */
 		public function enqueue_assets( $hook ) {
 			// Check if we're on the right screen.
-			if ( 'plugins_page_plugin_report' != $hook ) {
+			if ( 'plugins_page_plugin_report' !== $hook ) {
 				return;
 			}
-			// register the plugin's admin js, and require jquery
+			// Register the plugin's admin js, and require jquery.
 			wp_enqueue_script( 'plugin-report-js', plugins_url( '/js/plugin-report.js', __FILE__ ), array( 'jquery' ), self::PLUGIN_VERSION );
-			// add some variables to the page, to be used by the javascript
+			// Add some variables to the page, to be used by the javascript.
 			$slugs     = $this->get_plugin_slugs();
 			$slugs_str = implode( ',', $slugs );
 			$vars      = array(
@@ -249,7 +249,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				'message' => 'Success!',
 			);
 			// Return the response.
-			echo json_encode( $response );
+			echo wp_json_encode( $response );
 
 			wp_die();
 		}
@@ -335,13 +335,13 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				// Start the new table row.
 				$html = '<tr class="plugin-report-row-' . $report['slug'] . '">';
 				// Name.
-				if( isset( $report['local_info']['PluginURI'] ) && !empty( $report['local_info']['PluginURI'] ) ){
+				if ( isset( $report['local_info']['PluginURI'] ) && ! empty( $report['local_info']['PluginURI'] ) ) {
 					$html .= '<td><a href="' . $report['local_info']['PluginURI'] . '"><strong>' . $report['local_info']['Name'] . '</strong></a></td>';
 				} else {
 					$html .= '<td><strong>' . $report['local_info']['Name'] . '</strong></td>';
 				}
 				// Author.
-				if( isset( $report['local_info']['AuthorURI'] ) && !empty( $report['local_info']['AuthorURI'] ) ){
+				if ( isset( $report['local_info']['AuthorURI'] ) && ! empty( $report['local_info']['AuthorURI'] ) ) {
 					$html .= '<td><a href="' . $report['local_info']['AuthorURI'] . '">' . $report['local_info']['Author'] . '</a></td>';
 				} else {
 					$html .= '<td>' . $report['local_info']['Author'] . '</td>';
@@ -349,9 +349,9 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				// Activated.
 				$active = __( 'Please clear cache to update', 'plugin-report' );
 				$css_class = self::CSS_CLASS_MED;
-				if( is_multisite() ){
+				if ( is_multisite() ) {
 					$activation_status = $this->get_multisite_activation( $report['file_path'] );
-					if( $activation_status['network'] === true ){
+					if ( true === $activation_status['network'] ) {
 						$css_class = self::CSS_CLASS_LOW;
 						$html .= '<td class="' . $css_class . '">' . __( 'Network activated', 'plugin-report' ) . '</td>';
 					} else {
@@ -359,21 +359,21 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 						$html .= '<td class="' . $css_class . '">' . $activation_status['active'] . '/' . $activation_status['sites'] . '</td>';
 					}
 				} else {
-					if( isset( $report['file_path'] ) ){
+					if ( isset( $report['file_path'] ) ) {
 						$active    = is_plugin_active( $report['file_path'] ) ? __( 'Yes', 'plugin-report' ) : __( 'No', 'plugin-report' );
 						$css_class = is_plugin_active( $report['file_path'] ) ? self::CSS_CLASS_LOW : self::CSS_CLASS_HIGH;
 					}
 					$html .= '<td class="' . $css_class . '">' . $active . '</td>';
 				}
 				// Installed / available version.
-				if( isset( $report['repo_info'] ) ){
+				if ( isset( $report['repo_info'] ) ) {
 					$css_class = $this->get_version_risk_classname( $report['local_info']['Version'], $report['repo_info']->version );
 					$html .= '<td class="' . $css_class . '">';
 					$html .= $report['local_info']['Version'];
 					if ( $report['local_info']['Version'] != $report['repo_info']->version ) {
 						// Any platform upgrades needed?
 						global $wp_version;
-						$needs_php_upgrade = isset( $report['repo_info']->requires_php) ? version_compare( phpversion(), $report['repo_info']->requires_php, '<' ) : false;
+						$needs_php_upgrade = isset( $report['repo_info']->requires_php ) ? version_compare( phpversion(), $report['repo_info']->requires_php, '<' ) : false;
 						$needs_wp_upgrade  = isset( $report['repo_info']->requires ) ? version_compare( $wp_version, $report['repo_info']->requires, '<' ) : false;
 						// Create the additional message.
 						if ( $needs_wp_upgrade && $needs_php_upgrade ) {
@@ -395,7 +395,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$html .= '<td>' . $report['local_info']['Version'] . '</td>';
 				}
 				// Last updates.
-				if( isset( $report['repo_info'] ) ){
+				if ( isset( $report['repo_info'] ) ) {
 					$time_update = new DateTime( $report['repo_info']->last_updated );
 					$time_diff   = human_time_diff( $time_update->getTimestamp(), current_time( 'timestamp' ) );
 					$css_class   = $this->get_timediff_risk_classname( current_time( 'timestamp' ) - $time_update->getTimestamp() );
@@ -404,14 +404,14 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$html .= $this->render_error_cell();
 				}
 				// Tested up to.
-				if( isset( $report['repo_info'] ) ){
+				if ( isset( $report['repo_info'] ) ) {
 					$css_class = $this->get_version_risk_classname( $report['repo_info']->tested, $wp_latest );
 					$html .= '<td class="' . $css_class . '">' . $report['repo_info']->tested . '</td>';
 				} else {
 					$html .= $this->render_error_cell();
 				}
 				// Overall user rating.
-				if( isset( $report['repo_info'] ) ){
+				if ( isset( $report['repo_info'] ) ) {
 					$css_class  = ( intval( $report['repo_info']->num_ratings ) > 0 ) ? $this->get_percentage_risk_classname( intval( $report['repo_info']->rating ) ) : '';
 					$value_text = ( ( intval( $report['repo_info']->num_ratings ) > 0 ) ? $report['repo_info']->rating . '%' : esc_html__( 'No data available', 'plugin-report' ) );
 					$html      .= '<td class="' . $css_class . '">' . $value_text . '</td>';
@@ -437,7 +437,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 * Format an error message as a table cell, so we can return it to javascript
 		 */
 		private function render_error_cell( $message = null ) {
-			if( !$message ){
+			if ( ! $message ) {
 				$message = esc_html__( 'No data available', 'plugin-report' );
 			}
 			return '<td class="pluginreport-cell-error">' . $message . '</td>';
@@ -509,7 +509,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		/**
 		 * Gather statistics about a plugin's activation on a multisite install
 		 */
-		private function get_multisite_activation( $path ){
+		private function get_multisite_activation( $path ) {
 			// Create an array to contain the return values.
 			$activation_status = array(
 				'network' => false,
@@ -518,7 +518,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			);
 			// Check if the plugin is network activated.
 			$network_plugins = get_site_option( 'active_sitewide_plugins', null );
-			if( array_key_exists( $path, $network_plugins ) ){
+			if ( array_key_exists( $path, $network_plugins ) ) {
 				$activation_status['network'] = true;
 			} else {
 				// Get a list of all sites in the multisite install.
@@ -530,11 +530,11 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				// Add the total number of sites to the return array.
 				$activation_status['sites'] = count( $sites );
 				// Loop through the sites to find where the plugin is active.
-				foreach( $sites as $site_id ){
+				foreach ( $sites as $site_id ) {
 					$plugins = get_blog_option( $site_id, 'active_plugins', null );
-					if( $plugins ){
-						foreach( $plugins as $plugin_path ){
-							if( $plugin_path === $path ){
+					if ( $plugins ) {
+						foreach ( $plugins as $plugin_path ) {
+							if ( $plugin_path === $path ) {
 								$activation_status['active']++;
 							}
 						}
@@ -580,7 +580,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			if ( isset( $slug ) ) {
 				$cache_key = $this->create_cache_key( $slug );
 				delete_site_transient( $cache_key );
-			}			
+			}
 		}
 
 
