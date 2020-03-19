@@ -90,4 +90,6 @@ jQuery(document).ready( function( $ ){
 		link.remove();
 	}
 
+	new Tablesort(document.getElementById('plugin-report-table'));
+
 });
