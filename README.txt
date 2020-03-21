@@ -2,9 +2,9 @@
 Contributors: roytanck, zodiac1978, pedromendonca
 Tags: admin, plugins, multisite
 Requires at least: 4.6
-Tested up to: 5.3.2
+Tested up to: 5.4
 Requires PHP: 5.6
-Stable tag: 1.6
+Stable tag: 1.6.1
 License: GPLv3
 
 A WordPress plugin that provides detailed information about currently installed plugins.
@@ -23,6 +23,12 @@ A WordPress plugin that provides detailed information about currently installed 
 
 
 == Changelog ==
+
+= 1.6.1 (2020-03-21) =
+* Fixed an issue with version comparisons and beta/RC versions (thanks @zodiac1978)
+* Coding standards improvements (thanks @zodiac1978)
+* The plugin can now only be network-activated on multisite
+* Tested against WordPress 5.4
 
 = 1.6 (2020-03-14) =
 * Further i18n improvements (thanks @pedromendonca)

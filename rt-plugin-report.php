@@ -3,7 +3,7 @@
  * Plugin Name:       Plugin Report
  * Plugin URI:        https://roytanck.com/?p=277
  * Description:       Provides detailed information about currently installed plugins
- * Version:           1.6
+ * Version:           1.6.1
  * Requires at least: 4.6
  * Requires PHP:      5.6
  * Author:            Roy Tanck
@@ -28,7 +28,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		const CSS_CLASS_HIGH = 'pr-risk-high';
 
 		// Other class constants.
-		const PLUGIN_VERSION        = '1.6';
+		const PLUGIN_VERSION        = '1.6.1';
 		const COLS_PER_ROW          = 7;
 		const CACHE_LIFETIME        = DAY_IN_SECONDS;
 		const CACHE_LIFETIME_NOREPO = WEEK_IN_SECONDS;
