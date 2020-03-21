@@ -9,6 +9,7 @@
  * Author:            Roy Tanck
  * Author URI:        https://roytanck.com
  * License:           GPLv3
+ * Network:           true
  */
 
 // If called without WordPress, exit.
