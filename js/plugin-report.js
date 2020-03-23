@@ -85,7 +85,7 @@ jQuery(document).ready( function( $ ){
 		var link = document.createElement( 'a' );
 		var now = new Date();
 		link.download = 'plugin-report-' + now.getFullYear() + '-' + String( '0' + now.getMonth() ).slice(-2) + '-' + String( '0' + now.getDate() ).slice(-2) + '.xls';
-		link.href = uri + btoa( format( template, ctx ) );
+		link.href = uri + btoa( unescape( encodeURIComponent( format( template, ctx ) ) ) );
 		link.click();
 		link.remove();
 	}
