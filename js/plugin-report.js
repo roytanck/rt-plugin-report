@@ -5,6 +5,7 @@ jQuery(document).ready( function( $ ){
 	var rtpr_nrof_plugins = rtpr_slugs_array.length;
 	var rtpr_progress = 0;
 
+
 	function rtpr_process_next_plugin(){
 		if( rtpr_slugs_array.length > 0 ){
 			var slug = rtpr_slugs_array.shift();
@@ -17,13 +18,16 @@ jQuery(document).ready( function( $ ){
 		// update the progress information on the page
 		var perc = Math.ceil( ( rtpr_progress / rtpr_nrof_plugins ) * 100 );
 		if( perc < 100 ){
-			$('#plugin-report-progress').html( '<div class="plugin-report-progress-outer"><div class="plugin-report-progress-inner" style="width:' + perc + '%;"></div></div>' );
-			rtpr_progress++;	
+			if( ! $( '#plugin-report-progress' ).find( 'progress' ).length ){
+				$( '#plugin-report-progress' ).html( '<progress max="100" value="0"></progress>' );
+			}
+			$( '#plugin-report-progress progress' ).attr( 'value', perc );
+			rtpr_progress++;
 		} else {
 			$('#plugin-report-progress').html( '' );
 		}
-		
 	}
+
 
 	function rtpr_get_plugin_info( slug ){
 		var data = {
