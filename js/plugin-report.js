@@ -56,9 +56,9 @@ jQuery(document).ready( function( $ ){
 		var table_backup = $('#plugin-report-table').html();
 
 		// Attempt to put local styles in elements with known CSS classes.
-		$('td.rt-risk-low').attr( 'style', 'background-color: #dfd; color: #090 !important; font-weight: bold;' );
-		$('td.rt-risk-high').attr( 'style', 'background-color: #fdd; color: #c00 !important; font-weight: bold;' );
-		$('td.rt-risk-med').attr( 'style', 'font-weight: bold;' );
+		$('td.pr-risk-low').attr( 'style', 'background-color: #dfd; color: #090 !important; font-weight: bold;' );
+		$('td.pr-risk-high').attr( 'style', 'background-color: #fdd; color: #c00 !important; font-weight: bold;' );
+		$('td.pr-risk-med').attr( 'style', 'font-weight: bold;' );
 
 		// Call the function that does the exporting.
 		rtpr_export_table();
