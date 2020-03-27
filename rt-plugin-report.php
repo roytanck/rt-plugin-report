@@ -152,6 +152,16 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				}
 			}
 
+			echo '<tr>';
+			echo '<td>ဒီဟာအလုပ်လုပ်လားကြည့်ရအောင်</td>';
+			echo '<td>Lássuk, működik-e ez</td>';
+			echo '<td>讓我們看看這是否有效</td>';
+			echo '<td>بیایید ببینیم که آیا این کار می کند</td>';
+			echo '<td>Бул иштей тургандыгын көрөлү</td>';
+			echo '<td>இது செயல்படுகிறதா என்று பார்ப்போம்</td>';
+			echo '<td>これがうまくいくか見てみましょう</td>';
+			echo '</tr>';
+
 			echo '</tbody>';
 			echo '</table>';
 			echo '</p>';

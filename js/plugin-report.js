@@ -71,7 +71,6 @@ jQuery(document).ready( function( $ ){
 	// Export function based on https://stackoverflow.com/a/27843359 .
 	function rtpr_export_table(){
 		var table_html = $('#plugin-report-table').html();
-		var uri = 'data:application/vnd.ms-excel;charset=UTF-8;base64,';
 		var template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>';
 		var format = function(s, c) {
 			return s.replace(/{(\w+)}/g, function(m, p) {
@@ -85,7 +84,7 @@ jQuery(document).ready( function( $ ){
 		var link = document.createElement( 'a' );
 		var now = new Date();
 		link.download = 'plugin-report-' + now.getFullYear() + '-' + String( '0' + now.getMonth() ).slice(-2) + '-' + String( '0' + now.getDate() ).slice(-2) + '.xls';
-		link.href = uri + btoa( format( template, ctx ) );
+		link.href = URL.createObjectURL( new Blob( [ "\ufeff", format( template, ctx ) ], {type: 'application/vnd.ms-excel'} ) );
 		link.click();
 		link.remove();
 	}
