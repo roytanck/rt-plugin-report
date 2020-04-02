@@ -21,6 +21,10 @@ jQuery(document).ready( function( $ ){
 			rtpr_progress++;	
 		} else {
 			$('#plugin-report-progress').html( '' );
+			// add export button
+			rtpr_export_button();
+			// initialize sorting on table
+			new Tablesort(document.getElementById('plugin-report-table'));
 		}
 		
 	}
@@ -46,26 +50,28 @@ jQuery(document).ready( function( $ ){
 	rtpr_process_next_plugin();
 
 
-	// Create the export button.
-	$('#plugin-report-buttons').append('<button class="button" href="#" id="plugin-report-export-btn">' + plugin_report_vars.export_btn + '</button>');
+	function rtpr_export_button() {
+		// Create the export button.
+		$('#plugin-report-buttons').append('<button class="button" href="#" id="plugin-report-export-btn">' + plugin_report_vars.export_btn + '</button>');
 
-	// Export button event handler.
-	$('#plugin-report-export-btn').click( function( e ){
+		// Export button event handler.
+		$('#plugin-report-export-btn').click( function( e ){
 
-		// Create a backup of the table's html markup.
-		var table_backup = $('#plugin-report-table').html();
+			// Create a backup of the table's html markup.
+			var table_backup = $('#plugin-report-table').html();
 
-		// Attempt to put local styles in elements with known CSS classes.
-		$('td.rt-risk-low').attr( 'style', 'background-color: #dfd; color: #090 !important; font-weight: bold;' );
-		$('td.rt-risk-high').attr( 'style', 'background-color: #fdd; color: #c00 !important; font-weight: bold;' );
-		$('td.rt-risk-med').attr( 'style', 'font-weight: bold;' );
+			// Attempt to put local styles in elements with known CSS classes.
+			$('td.rt-risk-low').attr( 'style', 'background-color: #dfd; color: #090 !important; font-weight: bold;' );
+			$('td.rt-risk-high').attr( 'style', 'background-color: #fdd; color: #c00 !important; font-weight: bold;' );
+			$('td.rt-risk-med').attr( 'style', 'font-weight: bold;' );
 
-		// Call the function that does the exporting.
-		rtpr_export_table();
+			// Call the function that does the exporting.
+			rtpr_export_table();
 
-		// Restore the backup.
-		$('#plugin-report-table').html( table_backup );
-	});
+			// Restore the backup.
+			$('#plugin-report-table').html( table_backup );
+		});
+	}
 
 
 	// Export function based on https://stackoverflow.com/a/27843359 .
