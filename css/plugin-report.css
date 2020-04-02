@@ -25,16 +25,26 @@ span.pr-additional-info {
 
 /* progress bar */
 
-.plugin-report-progress-outer {
+#plugin-report-progress progress {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
 	width: 100%;
 	height: 1em;
-	background-color: #fff;
 	border: 1px solid #e5e5e5;
+	background-color: #fff;
+	color: #0073aa;
 }
 
-.plugin-report-progress-inner {
-	width: 0%;
-	height: 1em;
+#plugin-report-progress progress::-webkit-progress-bar {
+	background-color: #fff;
+}
+
+#plugin-report-progress progress::-webkit-progress-value {
+	background-color: #0073aa;
+}
+
+#plugin-report-progress progress::-moz-progress-bar {
 	background-color: #0073aa;
 }
 

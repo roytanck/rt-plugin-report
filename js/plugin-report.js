@@ -18,8 +18,11 @@ jQuery(document).ready( function( $ ){
 		// update the progress information on the page
 		var perc = Math.ceil( ( rtpr_progress / rtpr_nrof_plugins ) * 100 );
 		if( perc < 100 ){
-			$('#plugin-report-progress').html( '<div class="plugin-report-progress-outer"><div class="plugin-report-progress-inner" style="width:' + perc + '%;"></div></div>' );
-			rtpr_progress++;	
+			if( ! $( '#plugin-report-progress' ).find( 'progress' ).length ){
+				$( '#plugin-report-progress' ).html( '<progress max="100" value="0"></progress>' );
+			}
+			$( '#plugin-report-progress progress' ).attr( 'value', perc );
+			rtpr_progress++;
 		} else {
 			// Remove the progress bar.
 			$('#plugin-report-progress').html( '' );
@@ -33,7 +36,6 @@ jQuery(document).ready( function( $ ){
 				rtpr_export_table();
 			});
 		}
-		
 	}
 
 
