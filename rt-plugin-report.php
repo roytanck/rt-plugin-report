@@ -180,9 +180,11 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			$slugs     = $this->get_plugin_slugs();
 			$slugs_str = implode( ',', $slugs );
 			$vars      = array(
-				'plugin_slugs' => $slugs_str,
-				'ajax_nonce'   => wp_create_nonce( 'plugin_report_nonce' ),
-				'export_btn'   => __( 'Export .xls file', 'plugin-report' ),
+				'plugin_slugs'      => $slugs_str,
+				'ajax_nonce'        => wp_create_nonce( 'plugin_report_nonce' ),
+				'export_btn'        => __( 'Export .csv file', 'plugin-report' ),
+				'plugin_url_header' => __( 'Plugin URL', 'plugin-report' ),
+				'author_url_header' => __( 'Author URL', 'plugin-report' ),
 			);
 			wp_localize_script( 'plugin-report-js', 'plugin_report_vars', $vars );
 			// Enqueue admin CSS file.

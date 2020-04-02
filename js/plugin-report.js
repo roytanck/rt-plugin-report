@@ -5,6 +5,7 @@ jQuery(document).ready( function( $ ){
 	var rtpr_nrof_plugins = rtpr_slugs_array.length;
 	var rtpr_progress = 0;
 
+
 	function rtpr_process_next_plugin(){
 		if( rtpr_slugs_array.length > 0 ){
 			var slug = rtpr_slugs_array.shift();
@@ -20,14 +21,21 @@ jQuery(document).ready( function( $ ){
 			$('#plugin-report-progress').html( '<div class="plugin-report-progress-outer"><div class="plugin-report-progress-inner" style="width:' + perc + '%;"></div></div>' );
 			rtpr_progress++;	
 		} else {
+			// Remove the progress bar.
 			$('#plugin-report-progress').html( '' );
-			// add export button
-			rtpr_export_button();
 			// initialize sorting on table
 			new Tablesort(document.getElementById('plugin-report-table'));
+			// Create the export button.
+			$('#plugin-report-buttons').append('<button class="button" href="#" id="plugin-report-export-btn">' + plugin_report_vars.export_btn + '</button>');
+			// Export button event handler.
+			$('#plugin-report-export-btn').click( function( e ){
+				// Call the function that does the exporting.
+				rtpr_export_table();
+			});
 		}
 		
 	}
+
 
 	function rtpr_get_plugin_info( slug ){
 		var data = {
@@ -50,48 +58,59 @@ jQuery(document).ready( function( $ ){
 	rtpr_process_next_plugin();
 
 
-	function rtpr_export_button() {
-		// Create the export button.
-		$('#plugin-report-buttons').append('<button class="button" href="#" id="plugin-report-export-btn">' + plugin_report_vars.export_btn + '</button>');
-
-		// Export button event handler.
-		$('#plugin-report-export-btn').click( function( e ){
-
-			// Create a backup of the table's html markup.
-			var table_backup = $('#plugin-report-table').html();
-
-			// Attempt to put local styles in elements with known CSS classes.
-			$('td.rt-risk-low').attr( 'style', 'background-color: #dfd; color: #090 !important; font-weight: bold;' );
-			$('td.rt-risk-high').attr( 'style', 'background-color: #fdd; color: #c00 !important; font-weight: bold;' );
-			$('td.rt-risk-med').attr( 'style', 'font-weight: bold;' );
-
-			// Call the function that does the exporting.
-			rtpr_export_table();
-
-			// Restore the backup.
-			$('#plugin-report-table').html( table_backup );
-		});
-	}
-
-
-	// Export function based on https://stackoverflow.com/a/27843359 .
+	// Export CSV file.
 	function rtpr_export_table(){
-		var table_html = $('#plugin-report-table').html();
-		var uri = 'data:application/vnd.ms-excel;charset=UTF-8;base64,';
-		var template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>';
-		var format = function(s, c) {
-			return s.replace(/{(\w+)}/g, function(m, p) {
-				return c[p];
-			})
-		};
-		var ctx = {
-			worksheet: 'Worksheet',
-			table: table_html
-		}
+		var csv_data = '';
+		var counter = 0;
+		// Loop trough the table header to add the header cells.
+		$('#plugin-report-table thead tr').each(function(){
+			// Use a column counter, because we'll need ot insert two extra columns.
+			counter = 0;
+			// Loop through the header cells.
+			$(this).find('th').each(function(){
+				// Remove any comma's from the cell contents, then add to output.
+				csv_data += $(this).text().replace(/,/g, ".") + ',';
+				// If this is the first column, add the plugin url column
+				if( counter == 0 ){
+					csv_data += plugin_report_vars.plugin_url_header + ',';
+				}
+				// If this is the second column, add the author url column
+				if( counter == 1 ){
+					csv_data += plugin_report_vars.author_url_header + ',';
+				}
+				counter++;
+			});
+			// End of the line.
+			csv_data += "\n";
+		});
+		// Loop through the regular rows to get their data
+		$('#plugin-report-table tbody tr').each(function(){
+			// Use a column counter to insert the two columns.
+			counter = 0;
+			// Loop through all regular cells.
+			$(this).find('td').each(function(){
+				// Remove any comma's from the cell contents, then add to output.
+				csv_data += $(this).text().replace(/,/g, ".") + ',';
+				// If this is one of the first two columns, add a url column.
+				if( counter <2 ){
+					var href = '';
+					$(this).find('a').each(function(){
+						// Get the href attribute, but strip any url vars to keep it short.
+						href = $(this).attr('href').split('#')[0].split('?')[0];
+					});
+					// Add to the output.
+					csv_data += href + ',';
+				}
+				counter++;
+			});
+			// End of the line.
+			csv_data += "\n";
+		});
+		// Create a link element, clickit and remove it.
 		var link = document.createElement( 'a' );
 		var now = new Date();
-		link.download = 'plugin-report-' + now.getFullYear() + '-' + String( '0' + now.getMonth() ).slice(-2) + '-' + String( '0' + now.getDate() ).slice(-2) + '.xls';
-		link.href = uri + btoa( format( template, ctx ) );
+		link.download = 'plugin-report-' + now.getFullYear() + '-' + String( '0' + now.getMonth() ).slice(-2) + '-' + String( '0' + now.getDate() ).slice(-2) + '.csv';
+		link.href = URL.createObjectURL( new Blob( [ "\ufeff", csv_data ], {type: 'text/csv; header=present'} ) );
 		link.click();
 		link.remove();
 	}
