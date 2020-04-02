@@ -20,7 +20,16 @@ jQuery(document).ready( function( $ ){
 			$('#plugin-report-progress').html( '<div class="plugin-report-progress-outer"><div class="plugin-report-progress-inner" style="width:' + perc + '%;"></div></div>' );
 			rtpr_progress++;	
 		} else {
+			// Remove the progress bar.
 			$('#plugin-report-progress').html( '' );
+			// Create the export button.
+			$('#plugin-report-buttons').append('<button class="button" href="#" id="plugin-report-export-btn">' + plugin_report_vars.export_btn + '</button>');
+
+			// Export button event handler.
+			$('#plugin-report-export-btn').click( function( e ){
+				// Call the function that does the exporting.
+				rtpr_export_table();
+			});
 		}
 		
 	}
@@ -44,16 +53,6 @@ jQuery(document).ready( function( $ ){
 
 	// kick things off
 	rtpr_process_next_plugin();
-
-
-	// Create the export button.
-	$('#plugin-report-buttons').append('<button class="button" href="#" id="plugin-report-export-btn">' + plugin_report_vars.export_btn + '</button>');
-
-	// Export button event handler.
-	$('#plugin-report-export-btn').click( function( e ){
-		// Call the function that does the exporting.
-		rtpr_export_table();
-	});
 
 
 	// Export CSV file.
