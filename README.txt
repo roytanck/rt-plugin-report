@@ -4,7 +4,7 @@ Tags: admin, plugins, multisite
 Requires at least: 4.6
 Tested up to: 5.4
 Requires PHP: 5.6
-Stable tag: 1.6.1
+Stable tag: 1.7
 License: GPLv3
 
 A WordPress plugin that provides detailed information about currently installed plugins.
@@ -23,6 +23,11 @@ A WordPress plugin that provides detailed information about currently installed 
 
 
 == Changelog ==
+
+= 1.7 (2020-04-03) =
+* Adds column sorting (props @zodiac1978)
+* Replaces the Excel export with a more robust CSV export function
+* Uses HTML's progress element for the progress bar
 
 = 1.6.1 (2020-03-21) =
 * Fixed an issue with version comparisons and beta/RC versions (thanks @zodiac1978)
