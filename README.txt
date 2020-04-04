@@ -13,7 +13,7 @@ A WordPress plugin that provides detailed information about currently installed 
 
 * Spot plugins that are no longer maintained.
 * Get a quick overview of the "plugin health" of your site.
-* Provide clients with a detailed report, right from their own dashboard, or as .xls spreadsheet.
+* Provide clients with a detailed report, right from their own dashboard, or as CSV spreadsheet.
 * Find plugins that are no longer active on multisite installs
 
 
@@ -22,7 +22,7 @@ A WordPress plugin that provides detailed information about currently installed 
 1. Your plugin report is found under the Plugins menu, or in the Network section if your site is a multisite install.
 
 
-= Credits ==
+== Credits ==
 
 Special thanks go to [Tristen Forsythe Brown](http://tristen.ca/) for the [tablesort JavaScript library](https://github.com/tristen/tablesort) licensed under the MIT License.
 
