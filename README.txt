@@ -7,7 +7,7 @@ Requires PHP: 5.6
 Stable tag: 1.7
 License: GPLv3
 
-This is a fork of WordPress plugin that provides detailed information about currently installed plugins with more info.
+A WordPress plugin that provides detailed information about currently installed plugins.
 
 ##Plugin Report will allow you to:
 
@@ -15,8 +15,6 @@ This is a fork of WordPress plugin that provides detailed information about curr
 * Get a quick overview of the "plugin health" of your site.
 * Provide clients with a detailed report, right from their own dashboard, or as CSV spreadsheet.
 * Find plugins that are no longer active on multisite installs
-* Get information and changedate even if plugin is not in wordpress repo
-* Add Edit link and PHP minimum Version to report
 
 
 == Screenshots ==

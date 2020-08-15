@@ -22,9 +22,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 add_action( 'plugins_loaded', 'PluginReport_textdomain' );
 function PluginReport_textdomain() {
-	load_plugin_textdomain( 'Plugin-Report', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+	load_plugin_textdomain( 'plugin-report', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
+add_filter( 'load_textdomain_mofile', 'load_custom_plugin_translation_file', 10, 2 );
 
+// // Lokale übersetzung erzwingen
+function load_custom_plugin_translation_file( $mofile, $domain ) {
+  if ( 'plugin-report' === $domain ) {
+    $mofile = dirname(  __FILE__ ) . '/languages/plugin-report-' . get_locale() . '.mo';
+  }
+  return $mofile;
+}
 
 
 if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
@@ -134,7 +142,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			echo '<p>';
 
 			// The report's main table.
-			echo '<table id="plugin-report-table" class="wp-list-table widefat fixed striped">';
+			echo '<table id="plugin-report-table" class="wp-list-table widefat striped">';
 			echo '<thead>';
 			echo '<tr>';
 			echo '<th>' . esc_html__( 'Name', 'plugin-report' ) . '</th>';
@@ -426,6 +434,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$html       .= '<td class="' . $css_class . '" data-sort="' . $time_update->getTimestamp() . '">' . $time_diff . '</td>';
 				} else {
 					$time_diff   = human_time_diff( strtotime($report['local_info']['ModDatum']), current_time( 'timestamp' ) );
+					$css_class   = $this->get_timediff_risk_classname( current_time( 'timestamp' ) - strtotime($report['local_info']['ModDatum']) );
 					$html       .= '<td class="' . $css_class . '">' . $time_diff . '</td>';
 					// $html .= $this->render_error_cell();
 				}
