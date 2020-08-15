@@ -1,12 +1,15 @@
 <?php
 /**
  * Plugin Name:       Plugin Report
- * Plugin URI:        https://roytanck.com/?p=277
- * Description:       Provides detailed information about currently installed plugins
- * Version:           1.7
+ * Plugin URI:        https://github.com/svenbolte/rt-plugin-report
+ * Description:       Provides detailed information about currently installed plugins, More info thru this fork
+ * Version:           9.1.7
  * Requires at least: 4.6
  * Requires PHP:      5.6
- * Author:            Roy Tanck
+ * Tested up to:      5.5
+ * Text Domain:       plugin-report
+ * Domain Path:       /languages/
+ * Author:            Roy Tanck und PBMod
  * Author URI:        https://roytanck.com
  * License:           GPLv3
  * Network:           true
@@ -16,6 +19,12 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+add_action( 'plugins_loaded', 'PluginReport_textdomain' );
+function PluginReport_textdomain() {
+	load_plugin_textdomain( 'Plugin-Report', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+}
+
 
 
 if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
@@ -28,7 +37,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		const CSS_CLASS_HIGH = 'pr-risk-high';
 
 		// Other class constants.
-		const PLUGIN_VERSION        = '1.7';
+		const PLUGIN_VERSION        = '9.1.7';
 		const COLS_PER_ROW          = 7;
 		const CACHE_LIFETIME        = DAY_IN_SECONDS;
 		const CACHE_LIFETIME_NOREPO = WEEK_IN_SECONDS;
@@ -131,6 +140,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			echo '<th>' . esc_html__( 'Name', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Author', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Activated', 'plugin-report' ) . '</th>';
+			echo '<th>' . esc_html__( 'Edit | MinPHP', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="none" class="no-sort">' . esc_html__( 'Installed version', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Last update', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="dotsep">' . esc_html__( 'Tested up to WP version', 'plugin-report' ) . '</th>';
@@ -278,10 +288,12 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$report['slug'] = $slug;
 
 					// Get the locally available info, and add it  to the report.
+					$directory = str_replace('/wp-content/themes', '/wp-content/plugins', get_theme_root()).'/';
 					foreach ( $plugins as $key => $plugin ) {
 						if ( $this->get_plugin_slug( $key ) == $slug ) {
 							$report['local_info'] = $plugin;
 							$report['file_path'] = $key;
+							$report['local_info']['ModDatum'] = date("d.m.Y H:i:s", filemtime($directory . $key));
 							break;
 						}
 					}
@@ -290,7 +302,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$args = array(
 						'slug'   => $slug,
 						'fields' => array(
-							'description'   => false,
+							'description'   => true,
 							'sections'      => false,
 							'tags'          => false,
 							'version'       => true,
@@ -369,8 +381,14 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 						$active    = is_plugin_active( $report['file_path'] ) ? __( 'Yes', 'plugin-report' ) : __( 'No', 'plugin-report' );
 						$css_class = is_plugin_active( $report['file_path'] ) ? self::CSS_CLASS_LOW : self::CSS_CLASS_HIGH;
 					}
-					$html .= '<td class="' . $css_class . '">' . $active . '</td>';
+					$html .= '<td class="' . $css_class . '">' . $active . ' &nbsp; ' .$report['local_info']['ModDatum'] . '</td>';
 				}
+				// Direct Edit link, MinPHP, tested up to
+				$css_class = self::CSS_CLASS_MED;
+				$html .= '<td class="' . $css_class . '"><a href="plugin-editor.php?plugin='.$report['file_path'] . '">' . __( 'Edit', 'plugin-report' ) .'</a> &nbsp; '. $report['local_info']['RequiresPHP'] . '</td>';
+
+				
+				
 				// Installed / available version.
 				if ( isset( $report['repo_info'] ) ) {
 					$css_class = $this->get_version_risk_classname( $report['local_info']['Version'], $report['repo_info']->version );
@@ -407,7 +425,9 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$css_class   = $this->get_timediff_risk_classname( current_time( 'timestamp' ) - $time_update->getTimestamp() );
 					$html       .= '<td class="' . $css_class . '" data-sort="' . $time_update->getTimestamp() . '">' . $time_diff . '</td>';
 				} else {
-					$html .= $this->render_error_cell();
+					$time_diff   = human_time_diff( strtotime($report['local_info']['ModDatum']), current_time( 'timestamp' ) );
+					$html       .= '<td class="' . $css_class . '">' . $time_diff . '</td>';
+					// $html .= $this->render_error_cell();
 				}
 				// Tested up to.
 				if ( isset( $report['repo_info'] ) ) {
