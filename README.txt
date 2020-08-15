@@ -29,6 +29,10 @@ Special thanks go to [Tristen Forsythe Brown](http://tristen.ca/) for the [table
 
 == Changelog ==
 
+= 1.8 (2020-08.15)
+* Add column with direct edit link, file created, file modified
+* display tested up to and min php version read from local plugin (for those not having a wordpress site or being disabled on wp site
+
 = 1.7 (2020-04-03) =
 * Adds column sorting (props @zodiac1978)
 * Replaces the Excel export with a more robust CSV export function
