@@ -29,7 +29,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 		// Other class constants.
 		const PLUGIN_VERSION        = '1.7';
-		const COLS_PER_ROW          = 7;
+		const COLS_PER_ROW          = 8;
 		const CACHE_LIFETIME        = DAY_IN_SECONDS;
 		const CACHE_LIFETIME_NOREPO = WEEK_IN_SECONDS;
 
@@ -335,6 +335,8 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 * From a report, generate an HTML table row with relevant data for the plugin
 		 */
 		private function render_table_row( $report ) {
+			// Get the current WP version number.
+			global $wp_version;
 			// Get the latest WP release version number.
 			$wp_latest = $this->check_core_updates();
 			// Check if the report is valid.
@@ -381,7 +383,6 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$html .= $report['local_info']['Version'];
 					if ( $report['local_info']['Version'] != $report['repo_info']->version ) {
 						// Any platform upgrades needed?
-						global $wp_version;
 						$needs_php_upgrade = isset( $report['repo_info']->requires_php ) ? version_compare( phpversion(), $report['repo_info']->requires_php, '<' ) : false;
 						$needs_wp_upgrade  = isset( $report['repo_info']->requires ) ? version_compare( $wp_version, $report['repo_info']->requires, '<' ) : false;
 						// Create the additional message.
@@ -404,10 +405,14 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$html .= '<td>' . $report['local_info']['Version'] . '</td>';
 				}
 				// Auto-update
-				if( isset( $report['auto-update'] ) && $report['auto-update'] == 1 ){
-					$html .= '<td class="' . self::CSS_CLASS_LOW . '">' . __( 'Enabled', 'plugin-report' ) . '</td>';
+				if ( version_compare( $wp_version, '5.5', '<' ) ) {
+					$html .= '<td>' . __( 'Requires WordPress 5.5 or higher', 'plugin-report' ) . '</td>';
 				} else {
-					$html .= '<td>' . __( 'Not enabled', 'plugin-report' ) . '</td>';
+					if ( isset( $report['auto-update'] ) && $report['auto-update'] == 1 ) {
+						$html .= '<td class="' . self::CSS_CLASS_LOW . '">' . __( 'Enabled', 'plugin-report' ) . '</td>';
+					} else {
+						$html .= '<td>' . __( 'Not enabled', 'plugin-report' ) . '</td>';
+					}
 				}
 				// Last updates.
 				if ( isset( $report['repo_info'] ) ) {
