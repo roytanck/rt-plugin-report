@@ -21,7 +21,7 @@ jQuery(document).ready( function( $ ){
 			if( ! $( '#plugin-report-progress' ).find( 'progress' ).length ){
 				$( '#plugin-report-progress' ).html( '<progress max="100" value="0"></progress>' );
 			}
-			$( '#plugin-report-progress progress' ).attr( 'value', perc );
+			$( '#plugin-report-progress progress' ).prop( 'value', perc );
 			rtpr_progress++;
 		} else {
 			// Remove the progress bar.
