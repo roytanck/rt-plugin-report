@@ -132,6 +132,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			echo '<th>' . esc_html__( 'Author', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Activated', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="none" class="no-sort">' . esc_html__( 'Installed version', 'plugin-report' ) . '</th>';
+			echo '<th>' . esc_html__( 'Auto-update' ) . '</th>';
 			echo '<th>' . esc_html__( 'Last update', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="dotsep">' . esc_html__( 'Tested up to WP version', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="number">' . esc_html__( 'Rating', 'plugin-report' ) . '</th>';
@@ -267,10 +268,11 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 */
 		private function assemble_plugin_report( $slug ) {
 			if ( ! empty( $slug ) ) {
-				$report    = array();
-				$cache_key = $this->create_cache_key( $slug );
-				$cache     = get_site_transient( $cache_key );
-				$plugins   = get_plugins();
+				$report       = array();
+				$cache_key    = $this->create_cache_key( $slug );
+				$cache        = get_site_transient( $cache_key );
+				$plugins      = get_plugins();
+				$auto_updates = (array) get_site_option( 'auto_update_plugins', array() );
 
 				if ( empty( $cache ) ) {
 
@@ -280,8 +282,9 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					// Get the locally available info, and add it  to the report.
 					foreach ( $plugins as $key => $plugin ) {
 						if ( $this->get_plugin_slug( $key ) == $slug ) {
-							$report['local_info'] = $plugin;
-							$report['file_path'] = $key;
+							$report['local_info']  = $plugin;
+							$report['file_path']   = $key;
+							$report['auto-update'] = in_array( $key, $auto_updates );
 							break;
 						}
 					}
@@ -399,6 +402,12 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$html .= '</td>';
 				} else {
 					$html .= '<td>' . $report['local_info']['Version'] . '</td>';
+				}
+				// Auto-update
+				if( isset( $report['auto-update'] ) && $report['auto-update'] == 1 ){
+					$html .= '<td class="' . self::CSS_CLASS_LOW . '">' . __( 'Enabled', 'plugin-report' ) . '</td>';
+				} else {
+					$html .= '<td>' . __( 'Not enabled', 'plugin-report' ) . '</td>';
 				}
 				// Last updates.
 				if ( isset( $report['repo_info'] ) ) {
