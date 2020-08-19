@@ -3,7 +3,7 @@
  * Plugin Name:       Plugin Report
  * Plugin URI:        https://github.com/svenbolte/rt-plugin-report
  * Description:       Provides detailed information about currently installed plugins, More info thru this fork
- * Version:           9.1.7
+ * Version:           9.1.8.2
  * Requires at least: 4.6
  * Requires PHP:      5.6
  * Tested up to:      5.5
@@ -150,6 +150,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			echo '<th>' . esc_html__( 'Activated', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Edit | MinPHP', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="none" class="no-sort">' . esc_html__( 'Installed version', 'plugin-report' ) . '</th>';
+			echo '<th>' . esc_html__( 'Auto-update' ) . '</th>';
 			echo '<th>' . esc_html__( 'Last update', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="dotsep">' . esc_html__( 'Tested up to WP version', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="number">' . esc_html__( 'Rating', 'plugin-report' ) . '</th>';
@@ -289,7 +290,8 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				$cache_key = $this->create_cache_key( $slug );
 				$cache     = get_site_transient( $cache_key );
 				$plugins   = get_plugins();
-
+				$auto_updates = (array) get_site_option( 'auto_update_plugins', array() );
+				
 				if ( empty( $cache ) ) {
 
 					// Add the plugin's slug to the report.
@@ -302,6 +304,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 							$report['local_info'] = $plugin;
 							$report['file_path'] = $key;
 							$report['local_info']['ModDatum'] = date("d.m.Y H:i:s", filemtime($directory . $key));
+							$report['auto-update'] = in_array( $key, $auto_updates );
 							break;
 						}
 					}
@@ -352,6 +355,8 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 * From a report, generate an HTML table row with relevant data for the plugin
 		 */
 		private function render_table_row( $report ) {
+			// Get the current WP version number.
+			global $wp_version;
 			// Get the latest WP release version number.
 			$wp_latest = $this->check_core_updates();
 			// Check if the report is valid.
@@ -425,6 +430,16 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$html .= '</td>';
 				} else {
 					$html .= '<td>' . $report['local_info']['Version'] . '</td>';
+				}
+				// Auto-update
+				if ( version_compare( $wp_version, '5.5', '<' ) ) {
+					$html .= '<td>' . __( 'Requires WordPress 5.5 or higher', 'plugin-report' ) . '</td>';
+				} else {
+					if ( isset( $report['auto-update'] ) && $report['auto-update'] == 1 ) {
+						$html .= '<td class="' . self::CSS_CLASS_LOW . '">' . __( 'Enabled', 'plugin-report' ) . '</td>';
+					} else {
+						$html .= '<td>' . __( 'Not enabled', 'plugin-report' ) . '</td>';
+					}
 				}
 				// Last updates.
 				if ( isset( $report['repo_info'] ) ) {
