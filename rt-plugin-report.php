@@ -3,7 +3,7 @@
  * Plugin Name:       Plugin Report
  * Plugin URI:        https://github.com/svenbolte/rt-plugin-report
  * Description:       Provides detailed information about currently installed plugins, More info thru this fork
- * Version:           9.1.8.2
+ * Version:           9.1.8.3
  * Requires at least: 4.6
  * Requires PHP:      5.6
  * Tested up to:      5.5
@@ -137,7 +137,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			}
 			echo '<a href="' . admin_url( $page_url . '&clear_cache=' . current_time( 'timestamp' ) ) . '">' . esc_html__( 'Clear cached plugin data and reload', 'plugin-report' ) . '</a>';
 			echo '</p>';
-			echo '<h3>' . esc_html__( 'Currently installed plugins', 'plugin-report' ) . '</h3>';
+			echo '<h3>' . esc_html__( 'Currently installed plugins', 'plugin-report' ) . ' (' .count($plugins) . ')</h3>';
 			echo '<p id="plugin-report-progress"></p>';
 			echo '<p>';
 
@@ -150,7 +150,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			echo '<th>' . esc_html__( 'Activated', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Edit | MinPHP', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="none" class="no-sort">' . esc_html__( 'Installed version', 'plugin-report' ) . '</th>';
-			echo '<th>' . esc_html__( 'Auto-update' ) . '</th>';
+			echo '<th>' . esc_html__( 'Auto-Updates', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Last update', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="dotsep">' . esc_html__( 'Tested up to WP version', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="number">' . esc_html__( 'Rating', 'plugin-report' ) . '</th>';
@@ -398,8 +398,9 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				}
 				// Direct Edit link, MinPHP, tested up to
 				$css_class = self::CSS_CLASS_MED;
-				$html .= '<td class="' . $css_class . '"><a href="plugin-editor.php?plugin='.$report['file_path'] . '">' . __( 'Edit', 'plugin-report' ) .'</a> &nbsp; '. $report['local_info']['RequiresPHP'] . '</td>';
-
+				$html .= '<td title="Code-Editor" class="' . $css_class . '"><a href="plugin-editor.php?plugin='.$report['file_path'] . '">' . __( 'Edit', 'plugin-report' ) .'</a>';
+				if ( isset( $report['repo_info'] ) ) { $html .= '&nbsp; <a title="Wordpress Plugin-Site" target="_blank" href="plugin-install.php?tab=plugin-information&plugin='.$report['slug'] . '">Site</a>'; }
+				$html .= ' &nbsp; '. $report['local_info']['RequiresPHP'] . '</td>';
 				
 				
 				// Installed / available version.
