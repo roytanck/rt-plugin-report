@@ -1,19 +1,20 @@
 <?php
-/**
- * Plugin Name:       Plugin Report
- * Plugin URI:        https://github.com/svenbolte/rt-plugin-report
- * Description:       Provides detailed information about currently installed plugins, More info thru this fork
- * Version:           9.1.8.3
- * Requires at least: 4.6
- * Requires PHP:      5.6
- * Tested up to:      5.5
- * Text Domain:       plugin-report
- * Domain Path:       /languages/
- * Author:            Roy Tanck und PBMod
- * Author URI:        https://roytanck.com
- * License:           GPLv3
- * Network:           true
- */
+/*
+Plugin Name:       Plugin Report
+Plugin URI:        https://github.com/svenbolte/rt-plugin-report
+Description:       Provides detailed information about currently installed plugins, More info thru this fork
+Text Domain:       plugin-report
+Domain Path:       /languages/
+Author:            Roy Tanck und PBMod
+Author URI:        https://roytanck.com
+License:           GPLv3
+Network:           true
+Version: 9.1.8.3
+Stable tag: 9.1.8.3
+Requires at least: 5.1
+Tested up to: 5.5.1
+Requires PHP: 7.2
+*/
 
 // If called without WordPress, exit.
 if ( ! defined( 'ABSPATH' ) ) {
