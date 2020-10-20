@@ -2,8 +2,8 @@
 Contributors: roytanck, zodiac1978, pedromendonca, PBMod
 Tags: admin, plugins, multisite
 License: GPLv3
-Version: 9.1.8.3
-Stable tag: 9.1.8.3
+Version: 9.1.8.4
+Stable tag: 9.1.8.4
 Requires at least: 5.1
 Tested up to: 5.5.1
 Requires PHP: 7.2
@@ -29,6 +29,12 @@ Special thanks go to [Tristen Forsythe Brown](http://tristen.ca/) for the [table
 
 
 == Changelog ==
+
+= 9.1.8.4 (2020-10-20) =
+More detailed Data from local readme or plugin header - plugins without wordpress repository will be documented in list:
+  * TestedUpTo, MinPHP Version, Min Wordpress Version
+  * Plugin Description added in author column, some line breaks for formatting
+  * all list content will be shown without line breaks in csv export in excel
 
 = 9.1.8.3 (2020-08-17) =
 display Wordpress-Plugin-Site-Link if present

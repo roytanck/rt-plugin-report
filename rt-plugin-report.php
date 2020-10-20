@@ -9,8 +9,8 @@ Author:            Roy Tanck und PBMod
 Author URI:        https://roytanck.com
 License:           GPLv3
 Network:           true
-Version: 9.1.8.3
-Stable tag: 9.1.8.3
+Version: 9.1.8.4
+Stable tag: 9.1.8.4
 Requires at least: 5.1
 Tested up to: 5.5.1
 Requires PHP: 7.2
@@ -147,13 +147,12 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			echo '<thead>';
 			echo '<tr>';
 			echo '<th>' . esc_html__( 'Name', 'plugin-report' ) . '</th>';
-			echo '<th>' . esc_html__( 'Author', 'plugin-report' ) . '</th>';
+			echo '<th>' . esc_html__( 'Description | Author', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Activated', 'plugin-report' ) . '</th>';
-			echo '<th>' . esc_html__( 'Edit | MinPHP', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="none" class="no-sort">' . esc_html__( 'Installed version', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Auto-Updates', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Last update', 'plugin-report' ) . '</th>';
-			echo '<th data-sort-method="dotsep">' . esc_html__( 'Tested up to WP version', 'plugin-report' ) . '</th>';
+			echo '<th data-sort-method="dotsep">' . esc_html__( 'MinVersions', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="number">' . esc_html__( 'Rating', 'plugin-report' ) . '</th>';
 			echo '</tr>';
 			echo '</thead>';
@@ -302,6 +301,26 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$directory = str_replace('/wp-content/themes', '/wp-content/plugins', get_theme_root()).'/';
 					foreach ( $plugins as $key => $plugin ) {
 						if ( $this->get_plugin_slug( $key ) == $slug ) {
+							// Testedupto, PHPMin, MysqlMin abfragen
+							$plugin_data = $plugin_data = get_file_data( $directory . $key,
+								array(
+									'RequiresWP'  => 'Requires at least',
+									'RequiresPHP' => 'Requires PHP',
+									'TestedUpTo' => 'Tested up to',
+								), 'plugin' );
+							$readme_file = WP_PLUGIN_DIR . '/' . dirname( $key ) . '/readme.txt';
+							if ( file_exists( $readme_file ) ) {
+								$plugin_data = get_file_data(
+									$readme_file,
+									array(
+										'RequiresWP'  => 'Requires at least',
+										'RequiresPHP' => 'Requires PHP',
+										'TestedUpTo' => 'Tested up to',
+								   ), 'plugin'
+								);
+							}
+							$report['versions'] = 'T: '.$plugin_data['TestedUpTo'] . ' <br>P: ' . $plugin_data['RequiresPHP']. ' <br>M: ' . $plugin_data['RequiresWP'];
+							
 							$report['local_info'] = $plugin;
 							$report['file_path'] = $key;
 							$report['local_info']['ModDatum'] = date("d.m.Y H:i:s", filemtime($directory . $key));
@@ -372,12 +391,18 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				} else {
 					$html .= '<td><strong>' . $report['local_info']['Name'] . '</strong></td>';
 				}
+				// Description, Edit link and wordpress plugin page
+				$html .= '<td style="width:450px;max-width:35%">'.$report['local_info']['Description'].' <br>';
+				$html .= '<a href="plugin-editor.php?plugin='.$report['file_path'] . '">' . __( 'Edit', 'plugin-report' ) .'</a>';
+				if ( isset( $report['repo_info'] ) ) { $html .= ' &nbsp; <a title="Wordpress Plugin-Site" target="_blank" href="plugin-install.php?tab=plugin-information&plugin='.$report['slug'] . '">Site</a>'; }
+				$html .= ' &nbsp; ';
 				// Author.
 				if ( isset( $report['local_info']['AuthorURI'] ) && ! empty( $report['local_info']['AuthorURI'] ) ) {
-					$html .= '<td><a href="' . $report['local_info']['AuthorURI'] . '">' . $report['local_info']['Author'] . '</a></td>';
+					$html .= '<a href="' . $report['local_info']['AuthorURI'] . '">' . $report['local_info']['Author'] . '</a></td>';
 				} else {
-					$html .= '<td>' . $report['local_info']['Author'] . '</td>';
+					$html .= $report['local_info']['Author'];
 				}
+				$html .= '</td>';
 				// Activated.
 				$active = __( 'Please clear cache to update', 'plugin-report' );
 				$css_class = self::CSS_CLASS_MED;
@@ -395,14 +420,9 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 						$active    = is_plugin_active( $report['file_path'] ) ? __( 'Yes', 'plugin-report' ) : __( 'No', 'plugin-report' );
 						$css_class = is_plugin_active( $report['file_path'] ) ? self::CSS_CLASS_LOW : self::CSS_CLASS_HIGH;
 					}
-					$html .= '<td class="' . $css_class . '">' . $active . ' &nbsp; ' .$report['local_info']['ModDatum'] . '</td>';
+					$time_diff   = human_time_diff( strtotime($report['local_info']['ModDatum']), current_time( 'timestamp' ) );
+					$html .= '<td class="' . $css_class . '">' . $active . ' <br>' .$report['local_info']['ModDatum'] . ' <br>' . $time_diff . '</td>';
 				}
-				// Direct Edit link, MinPHP, tested up to
-				$css_class = self::CSS_CLASS_MED;
-				$html .= '<td title="Code-Editor" class="' . $css_class . '"><a href="plugin-editor.php?plugin='.$report['file_path'] . '">' . __( 'Edit', 'plugin-report' ) .'</a>';
-				if ( isset( $report['repo_info'] ) ) { $html .= '&nbsp; <a title="Wordpress Plugin-Site" target="_blank" href="plugin-install.php?tab=plugin-information&plugin='.$report['slug'] . '">Site</a>'; }
-				$html .= ' &nbsp; '. $report['local_info']['RequiresPHP'] . '</td>';
-				
 				
 				// Installed / available version.
 				if ( isset( $report['repo_info'] ) ) {
@@ -415,18 +435,18 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 						$needs_php_upgrade = isset( $report['repo_info']->requires_php ) ? version_compare( phpversion(), $report['repo_info']->requires_php, '<' ) : false;
 						$needs_wp_upgrade  = isset( $report['repo_info']->requires ) ? version_compare( $wp_version, $report['repo_info']->requires, '<' ) : false;
 						// Create the additional message.
-						if ( $needs_wp_upgrade && $needs_php_upgrade ) {
+						if ( $needs_wp_upgrade && !$needs_php_upgrade ) {
 							/* translators: %1$s: Plugin version number, %2$s: WP version number, %3$s: PHP version number */
-							$html .= ' <span class="pr-additional-info">' . sprintf( esc_html__( '(%1$s available, requires WP %2$s and PHP %3$s)', 'plugin-report'), $report['repo_info']->version, $report['repo_info']->requires, $report['repo_info']->requires_php ) . '</span>';
+							$html .= ' <br><span class="pr-additional-info">' . sprintf( esc_html__( '(%1$s available, requires WP %2$s and PHP %3$s)', 'plugin-report'), $report['repo_info']->version, $report['repo_info']->requires, $report['repo_info']->requires_php ) . '</span>';
 						} elseif ( $needs_wp_upgrade ) {
 							/* translators: %1$s: Plugin version number, %2$s: WP version number. */
-							$html .= ' <span class="pr-additional-info">' . sprintf( esc_html__( '(%1$s available, requires WP %2$s)', 'plugin-report'), $report['repo_info']->version, $report['repo_info']->requires ) . '</span>';
+							$html .= ' <br><span class="pr-additional-info">' . sprintf( esc_html__( '(%1$s available, requires WP %2$s)', 'plugin-report'), $report['repo_info']->version, $report['repo_info']->requires ) . '</span>';
 						} elseif ( $needs_php_upgrade ) {
 							/* translators: %1$s: Plugin version number, %2$s: PHP version number. */
-							$html .= ' <span class="pr-additional-info">' . sprintf( esc_html__( '(%1$s available, requires PHP %2$s)', 'plugin-report'), $report['repo_info']->version, $report['repo_info']->requires_php ) . '</span>';
+							$html .= ' <br><span class="pr-additional-info">' . sprintf( esc_html__( '(%1$s available, requires PHP %2$s)', 'plugin-report'), $report['repo_info']->version, $report['repo_info']->requires_php ) . '</span>';
 						} else {
 							/* translators: %s: Plugin version number. */
-							$html .= ' <span class="pr-additional-info">' . sprintf( esc_html__( '(%s available)', 'plugin-report'), $report['repo_info']->version ) . '</span>';
+							$html .= ' <br><span class="pr-additional-info">' . sprintf( esc_html__( '(%s available)', 'plugin-report'), $report['repo_info']->version ) . '</span>';
 						}
 					}
 					$html .= '</td>';
@@ -448,7 +468,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$time_update = new DateTime( $report['repo_info']->last_updated );
 					$time_diff   = human_time_diff( $time_update->getTimestamp(), current_time( 'timestamp' ) );
 					$css_class   = $this->get_timediff_risk_classname( current_time( 'timestamp' ) - $time_update->getTimestamp() );
-					$html       .= '<td class="' . $css_class . '" data-sort="' . $time_update->getTimestamp() . '">' . $time_diff . '</td>';
+					$html       .= '<td class="' . $css_class . '" data-sort="' . $time_update->getTimestamp() . '">' . $time_diff. '</td>';
 				} else {
 					$time_diff   = human_time_diff( strtotime($report['local_info']['ModDatum']), current_time( 'timestamp' ) );
 					$css_class   = $this->get_timediff_risk_classname( current_time( 'timestamp' ) - strtotime($report['local_info']['ModDatum']) );
@@ -456,11 +476,12 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					// $html .= $this->render_error_cell();
 				}
 				// Tested up to.
+				$html .= '<td class="' . $css_class . '">';
 				if ( isset( $report['repo_info'] ) ) {
 					$css_class = $this->get_version_risk_classname( $report['repo_info']->tested, $wp_latest );
-					$html .= '<td class="' . $css_class . '">' . $report['repo_info']->tested . '</td>';
+					$html .= $report['repo_info']->tested . ' Online <br>'. $report['versions'] . '</td>';
 				} else {
-					$html .= $this->render_error_cell();
+					$html .= '<br>'. $report['versions'] . '</td>';
 				}
 				// Overall user rating.
 				if ( isset( $report['repo_info'] ) ) {
