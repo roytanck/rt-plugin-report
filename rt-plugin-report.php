@@ -425,7 +425,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				}
 				// Tested up to.
 				if ( isset( $report['repo_info'] ) ) {
-					$css_class = $this->get_version_risk_classname( $report['repo_info']->tested, $wp_latest );
+					$css_class = $this->get_version_risk_classname( $report['repo_info']->tested, $wp_latest, true );
 					$html .= '<td class="' . $css_class . '">' . $report['repo_info']->tested . '</td>';
 				} else {
 					$html .= $this->render_error_cell();
@@ -465,9 +465,25 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 
 		/**
+		 * Return the version string with all elements beyond the second removed ("5.5.1" -> "5.5").
+		 */
+		private function get_major_version( $version_string ) {
+			$parts = explode( '.', $version_string );
+			array_splice( $parts, 2 );
+			return implode( '.', $parts );
+		}
+
+
+		/**
 		 * Figure out what CSS class to use based on current and optimal version numbers
 		 */
-		private function get_version_risk_classname( $available, $optimal ) {
+		private function get_version_risk_classname( $available, $optimal, $major_only = false ) {
+			// Use only the first two elements of the version number if $major_only is set to true.
+			// This is used for WP version numbers, where point releases are not considered a risk.
+			if( $major_only ) {
+				$available = $this->get_major_version( $available );
+				$optimal   = $this->get_major_version( $optimal );
+			}
 			// If the version is equal or higher, indicate low risk.
 			if ( version_compare( $available, $optimal, '>=' ) ) {
 				return self::CSS_CLASS_LOW;
