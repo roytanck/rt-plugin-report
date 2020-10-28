@@ -4,7 +4,7 @@ Tags: admin, plugins, multisite
 Requires at least: 4.6
 Tested up to: 5.5
 Requires PHP: 5.6
-Stable tag: 1.8
+Stable tag: 1.8.1
 License: GPLv3
 
 A WordPress plugin that provides detailed information about currently installed plugins.
@@ -28,6 +28,9 @@ Special thanks go to [Tristen Forsythe Brown](http://tristen.ca/) for the [table
 
 
 == Changelog ==
+
+= 1.8.1 (2020-10-28) =
+* Modified the way WP version numbers are compared to fix issues with non-repo plugins and non-standard version numbering
 
 = 1.8 (2020-08-17) =
 * Fixed a jQuery issue causing errors in WP 5.5
