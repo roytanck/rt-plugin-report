@@ -2,10 +2,10 @@
 Contributors: roytanck, zodiac1978, pedromendonca, PBMod
 Tags: admin, plugins, multisite
 License: GPLv3
-Version: 9.1.8.4
-Stable tag: 9.1.8.4
+Version: 9.1.8.5
+Stable tag: 9.1.8.5
 Requires at least: 5.1
-Tested up to: 5.5.1
+Tested up to: 5.5.3
 Requires PHP: 7.2
 
 A WordPress plugin that provides detailed information about currently installed plugins.
