@@ -132,7 +132,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			echo '<th>' . esc_html__( 'Author', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Activated', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="none" class="no-sort">' . esc_html__( 'Installed version', 'plugin-report' ) . '</th>';
-			echo '<th>' . esc_html__( 'Auto-update' ) . '</th>';
+			echo '<th>' . esc_html__( 'Auto-update', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Last update', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="dotsep">' . esc_html__( 'Tested up to WP version', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="number">' . esc_html__( 'Rating', 'plugin-report' ) . '</th>';
