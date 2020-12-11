@@ -281,7 +281,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 					// Get the locally available info, and add it  to the report.
 					foreach ( $plugins as $key => $plugin ) {
-						if ( $this->get_plugin_slug( $key ) == $slug ) {
+						if ( $this->get_plugin_slug( $key ) === $slug ) {
 							$report['local_info']  = $plugin;
 							$report['file_path']   = $key;
 							$report['auto-update'] = in_array( $key, $auto_updates );
@@ -304,6 +304,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 							'author'        => true,
 						),
 					);
+
 					$returned_object = plugins_api( 'plugin_information', $args );
 
 					// Add the repo info to the report.
@@ -313,7 +314,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 						set_site_transient( $cache_key, $report, self::CACHE_LIFETIME );
 					} else {
 						// Store the error code and message in the report.
-						$report['repo_error_code'] = $returned_object->get_error_code();
+						$report['repo_error_code']    = $returned_object->get_error_code();
 						$report['repo_error_message'] = $returned_object->get_error_message();
 						// Cache for an extra long time when the plugin is not in the repo.
 						set_site_transient( $cache_key, $report, self::CACHE_LIFETIME_NOREPO );
@@ -340,7 +341,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			// Get the latest WP release version number.
 			$wp_latest = $this->check_core_updates();
 			// Check if the report is valid.
-			if ( $report == null ) {
+			if ( null === $report ) {
 				$html = $this->render_error_row( esc_html__( 'No plugin data available.', 'plugin-report' ) );
 			} else {
 				// Start the new table row.
@@ -358,16 +359,16 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$html .= '<td>' . $report['local_info']['Author'] . '</td>';
 				}
 				// Activated.
-				$active = __( 'Please clear cache to update', 'plugin-report' );
+				$active    = __( 'Please clear cache to update', 'plugin-report' );
 				$css_class = self::CSS_CLASS_MED;
 				if ( is_multisite() ) {
 					$activation_status = $this->get_multisite_activation( $report['file_path'] );
 					if ( true === $activation_status['network'] ) {
 						$css_class = self::CSS_CLASS_LOW;
-						$html .= '<td class="' . $css_class . '">' . __( 'Network activated', 'plugin-report' ) . '</td>';
+						$html     .= '<td class="' . $css_class . '">' . __( 'Network activated', 'plugin-report' ) . '</td>';
 					} else {
 						$css_class = ( $activation_status['active'] > 0 ) ? self::CSS_CLASS_LOW : self::CSS_CLASS_HIGH;
-						$html .= '<td class="' . $css_class . '">' . $activation_status['active'] . '/' . $activation_status['sites'] . '</td>';
+						$html     .= '<td class="' . $css_class . '">' . $activation_status['active'] . '/' . $activation_status['sites'] . '</td>';
 					}
 				} else {
 					if ( isset( $report['file_path'] ) ) {
@@ -379,36 +380,36 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				// Installed / available version.
 				if ( isset( $report['repo_info'] ) ) {
 					$css_class = $this->get_version_risk_classname( $report['local_info']['Version'], $report['repo_info']->version );
-					$html .= '<td class="' . $css_class . '">';
-					$html .= $report['local_info']['Version'];
-					if ( $report['local_info']['Version'] != $report['repo_info']->version ) {
+					$html     .= '<td class="' . $css_class . '">';
+					$html     .= $report['local_info']['Version'];
+					if ( $report['local_info']['Version'] !== $report['repo_info']->version ) {
 						// Any platform upgrades needed?
 						$needs_php_upgrade = isset( $report['repo_info']->requires_php ) ? version_compare( phpversion(), $report['repo_info']->requires_php, '<' ) : false;
 						$needs_wp_upgrade  = isset( $report['repo_info']->requires ) ? version_compare( $wp_version, $report['repo_info']->requires, '<' ) : false;
 						// Create the additional message.
 						if ( $needs_wp_upgrade && $needs_php_upgrade ) {
 							/* translators: %1$s: Plugin version number, %2$s: WP version number, %3$s: PHP version number */
-							$html .= ' <span class="pr-additional-info">' . sprintf( esc_html__( '(%1$s available, requires WP %2$s and PHP %3$s)', 'plugin-report'), $report['repo_info']->version, $report['repo_info']->requires, $report['repo_info']->requires_php ) . '</span>';
+							$html .= ' <span class="pr-additional-info">' . sprintf( esc_html__( '(%1$s available, requires WP %2$s and PHP %3$s)', 'plugin-report' ), $report['repo_info']->version, $report['repo_info']->requires, $report['repo_info']->requires_php ) . '</span>';
 						} elseif ( $needs_wp_upgrade ) {
 							/* translators: %1$s: Plugin version number, %2$s: WP version number. */
-							$html .= ' <span class="pr-additional-info">' . sprintf( esc_html__( '(%1$s available, requires WP %2$s)', 'plugin-report'), $report['repo_info']->version, $report['repo_info']->requires ) . '</span>';
+							$html .= ' <span class="pr-additional-info">' . sprintf( esc_html__( '(%1$s available, requires WP %2$s)', 'plugin-report' ), $report['repo_info']->version, $report['repo_info']->requires ) . '</span>';
 						} elseif ( $needs_php_upgrade ) {
 							/* translators: %1$s: Plugin version number, %2$s: PHP version number. */
-							$html .= ' <span class="pr-additional-info">' . sprintf( esc_html__( '(%1$s available, requires PHP %2$s)', 'plugin-report'), $report['repo_info']->version, $report['repo_info']->requires_php ) . '</span>';
+							$html .= ' <span class="pr-additional-info">' . sprintf( esc_html__( '(%1$s available, requires PHP %2$s)', 'plugin-report' ), $report['repo_info']->version, $report['repo_info']->requires_php ) . '</span>';
 						} else {
 							/* translators: %s: Plugin version number. */
-							$html .= ' <span class="pr-additional-info">' . sprintf( esc_html__( '(%s available)', 'plugin-report'), $report['repo_info']->version ) . '</span>';
+							$html .= ' <span class="pr-additional-info">' . sprintf( esc_html__( '(%s available)', 'plugin-report' ), $report['repo_info']->version ) . '</span>';
 						}
 					}
 					$html .= '</td>';
 				} else {
 					$html .= '<td>' . $report['local_info']['Version'] . '</td>';
 				}
-				// Auto-update
+				// Auto-update.
 				if ( version_compare( $wp_version, '5.5', '<' ) ) {
 					$html .= '<td>' . __( 'Requires WordPress 5.5 or higher', 'plugin-report' ) . '</td>';
 				} else {
-					if ( isset( $report['auto-update'] ) && $report['auto-update'] == 1 ) {
+					if ( isset( $report['auto-update'] ) && 1 === $report['auto-update'] ) {
 						$html .= '<td class="' . self::CSS_CLASS_LOW . '">' . __( 'Enabled', 'plugin-report' ) . '</td>';
 					} else {
 						$html .= '<td>' . __( 'Not enabled', 'plugin-report' ) . '</td>';
@@ -426,7 +427,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				// Tested up to.
 				if ( isset( $report['repo_info'] ) ) {
 					$css_class = $this->get_version_risk_classname( $report['repo_info']->tested, $wp_latest, true );
-					$html .= '<td class="' . $css_class . '">' . $report['repo_info']->tested . '</td>';
+					$html     .= '<td class="' . $css_class . '">' . $report['repo_info']->tested . '</td>';
 				} else {
 					$html .= $this->render_error_cell();
 				}
@@ -480,7 +481,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		private function get_version_risk_classname( $available, $optimal, $major_only = false ) {
 			// Use only the first two elements of the version number if $major_only is set to true.
 			// This is used for WP version numbers, where point releases are not considered a risk.
-			if( $major_only ) {
+			if ( $major_only ) {
 				$available = $this->get_major_version( $available );
 				$optimal   = $this->get_major_version( $optimal );
 			}
@@ -530,11 +531,11 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			global $wp_version;
 			$update = get_preferred_from_update_core();
 			// Bail out of no valid response, or false.
-			if ( ! $update || $update == false ) {
+			if ( ! $update || false === $update ) {
 				return $wp_version;
 			}
 			// If latest, return current version number.
-			if ( $update->response == 'latest' ) {
+			if ( 'latest' === $update->response ) {
 				return $wp_version;
 			}
 			// Return the preferred update's version number.
@@ -558,7 +559,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				$activation_status['network'] = true;
 			} else {
 				// Get a list of all sites in the multisite install.
-				$args = array(
+				$args  = array(
 					'number' => 9999,
 					'fields' => 'ids',
 				);
