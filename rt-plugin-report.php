@@ -20,6 +20,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
+	/**
+	 * Plugin Report main class.
+	 */
 	class RT_Plugin_Report {
 
 		// CSS class constants.
@@ -166,6 +169,8 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 		/**
 		 * Enqueue admin javascript
+		 *
+		 * @param string $hook  Screen hook.
 		 */
 		public function enqueue_assets( $hook ) {
 			// Check if we're on the right screen.
@@ -207,7 +212,9 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 
 		/**
-		 * Convert a plugin's file path into its slug
+		 * Convert a plugin's file path into its slug.
+		 *
+		 * @param string $file  Plugin file path.
 		 */
 		private function get_plugin_slug( $file ) {
 			if ( strpos( $file, '/' ) !== false ) {
@@ -264,7 +271,9 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 		/**
 		 * Gather all the info we can get about a plugin.
-		 * Uses transient caching to avoid doing repo API calls on every page visit
+		 * Uses transient caching to avoid doing repo API calls on every page visit.
+		 *
+		 * @param string $slug   Plugin slug.
 		 */
 		private function assemble_plugin_report( $slug ) {
 			if ( ! empty( $slug ) ) {
@@ -333,7 +342,9 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 
 		/**
-		 * From a report, generate an HTML table row with relevant data for the plugin
+		 * From a report, generate an HTML table row with relevant data for the plugin.
+		 *
+		 * @param array $report   Report of plugin.
 		 */
 		private function render_table_row( $report ) {
 			// Get the current WP version number.
@@ -447,7 +458,9 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 
 		/**
-		 * Format an error message as a table row, so we can return it to javascript
+		 * Format an error message as a table row, so we can return it to javascript.
+		 *
+		 * @param string $message   Message to be shown.
 		 */
 		private function render_error_row( $message ) {
 			return '<tr class="pluginreport-row-error"><td colspan="' . self::COLS_PER_ROW . '">' . $message . '</td></tr>';
@@ -455,7 +468,9 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 
 		/**
-		 * Format an error message as a table cell, so we can return it to javascript
+		 * Format an error message as a table cell, so we can return it to javascript.
+		 *
+		 * @param string $message   Message to be shown.
 		 */
 		private function render_error_cell( $message = null ) {
 			if ( ! $message ) {
@@ -467,6 +482,8 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 		/**
 		 * Return the version string with all elements beyond the second removed ("5.5.1" -> "5.5").
+		 *
+		 * @param string $version_string   Complete version number.
 		 */
 		private function get_major_version( $version_string ) {
 			$parts = explode( '.', $version_string );
@@ -476,7 +493,11 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 
 		/**
-		 * Figure out what CSS class to use based on current and optimal version numbers
+		 * Figure out what CSS class to use based on current and optimal version numbers.
+		 *
+		 * @param string $available    Available version.
+		 * @param string $optimal      Optimal version.
+		 * @param bool   $major_only   True to compare only major versions, false otherwise.
 		 */
 		private function get_version_risk_classname( $available, $optimal, $major_only = false ) {
 			// Use only the first two elements of the version number if $major_only is set to true.
@@ -495,7 +516,9 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 
 		/**
-		 * Assess the risk associated with low ratings or poor compatibility feedback, return corresponding CSS class
+		 * Assess the risk associated with low ratings or poor compatibility feedback, return corresponding CSS class.
+		 *
+		 * @param int $perc   Rating percentage.
 		 */
 		private function get_percentage_risk_classname( $perc ) {
 			if ( $perc < 70 ) {
@@ -509,7 +532,9 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 
 		/**
-		 * Assess the risk associated with low ratings or poor compatibility feedback, return corresponding CSS class
+		 * Assess the risk associated with low ratings or poor compatibility feedback, return corresponding CSS class.
+		 *
+		 * @param string $time_diff   Time difference.
 		 */
 		private function get_timediff_risk_classname( $time_diff ) {
 			$days = $time_diff / ( DAY_IN_SECONDS );
@@ -544,7 +569,9 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 
 		/**
-		 * Gather statistics about a plugin's activation on a multisite install
+		 * Gather statistics about a plugin's activation on a multisite install.
+		 *
+		 * @param string $path   Plugin path.
 		 */
 		private function get_multisite_activation( $path ) {
 			// Create an array to contain the return values.
@@ -585,6 +612,8 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 		/**
 		 * Create a cache key that is unique to the provided plugin slug.
+		 *
+		 * @param string $slug   Plugin slug.
 		 */
 		private function create_cache_key( $slug ) {
 			// Create a hash for the plugin slug.
@@ -611,7 +640,9 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 
 		/**
-		 * Remove the cache item for a single plugin
+		 * Remove the cache item for a single plugin.
+		 *
+		 * @param string $slug   Plugin slug.
 		 */
 		private function clear_cache_item( $slug ) {
 			if ( isset( $slug ) ) {
