@@ -1,9 +1,9 @@
 === Plugin Report ===
 Contributors: roytanck, zodiac1978, pedromendonca, PBMod
-Tags: admin, plugins, multisite
+Tags: admin, plugins, multisite, report
 License: GPLv3
-Version: 9.1.8.5
-Stable tag: 9.1.8.5
+Version: 9.1.8.2.6
+Stable tag: 9.1.8.2.6
 Requires at least: 5.1
 Tested up to: 5.6
 Requires PHP: 7.4
@@ -29,6 +29,11 @@ Special thanks go to [Tristen Forsythe Brown](http://tristen.ca/) for the [table
 
 
 == Changelog ==
+
+= 9.1.8.2.6 (2020-10-20) =
+get translated description of plugins, if available
+take javascript sources from the master branch
+apply changes to the code
 
 = 9.1.8.4 (2020-10-20) =
 More detailed Data from local readme or plugin header - plugins without wordpress repository will be documented in list:

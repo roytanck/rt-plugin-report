@@ -9,8 +9,8 @@ Author:            Roy Tanck und PBMod
 Author URI:        https://roytanck.com
 License:           GPLv3
 Network:           true
-Version: 9.1.8.5
-Stable tag: 9.1.8.5
+Version: 9.1.8.2.6
+Stable tag: 9.1.8.2.6
 Requires at least: 5.1
 Tested up to: 5.6
 Requires PHP: 7.4
@@ -307,6 +307,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 									'RequiresWP'  => 'Requires at least',
 									'RequiresPHP' => 'Requires PHP',
 									'TestedUpTo' => 'Tested up to',
+									'TextDomain' => 'TextDomain',
 								), 'plugin' );
 							$readme_file = WP_PLUGIN_DIR . '/' . dirname( $key ) . '/readme.txt';
 							if ( file_exists( $readme_file ) ) {
@@ -316,6 +317,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 										'RequiresWP'  => 'Requires at least',
 										'RequiresPHP' => 'Requires PHP',
 										'TestedUpTo' => 'Tested up to',
+										'TextDomain' => 'TextDomain',
 								   ), 'plugin'
 								);
 							}
@@ -392,7 +394,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$html .= '<td><strong>' . $report['local_info']['Name'] . '</strong></td>';
 				}
 				// Description, Edit link and wordpress plugin page
-				$html .= '<td style="width:450px;max-width:35%">'.$report['local_info']['Description'].' <br>';
+				$html .= '<td style="width:450px;max-width:35%">'.__($report['local_info']['Description'], $report['local_info']['TextDomain']).' <br>';
 				$html .= '<a href="plugin-editor.php?plugin='.$report['file_path'] . '">' . __( 'Edit', 'plugin-report' ) .'</a>';
 				if ( isset( $report['repo_info'] ) ) { $html .= ' &nbsp; <a title="Wordpress Plugin-Site" target="_blank" href="plugin-install.php?tab=plugin-information&plugin='.$report['slug'] . '">Site</a>'; }
 				$html .= ' &nbsp; ';
