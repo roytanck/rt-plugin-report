@@ -9,10 +9,10 @@ Author:            Roy Tanck und PBMod
 Author URI:        https://roytanck.com
 License:           GPLv3
 Network:           true
-Version: 9.1.8.2.6
-Stable tag: 9.1.8.2.6
+Version: 9.1.8.2.7
+Stable tag: 9.1.8.2.7
 Requires at least: 5.1
-Tested up to: 5.6
+Tested up to: 5.6.2
 Requires PHP: 7.4
 */
 
@@ -488,7 +488,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				// Overall user rating.
 				if ( isset( $report['repo_info'] ) ) {
 					$css_class  = ( intval( $report['repo_info']->num_ratings ) > 0 ) ? $this->get_percentage_risk_classname( intval( $report['repo_info']->rating ) ) : '';
-					$value_text = ( ( intval( $report['repo_info']->num_ratings ) > 0 ) ? $report['repo_info']->rating . '%' : esc_html__( 'No data available', 'plugin-report' ) );
+					$value_text = ( ( intval( $report['repo_info']->num_ratings ) > 0 ) ? intval($report['repo_info']->rating) . '%' : esc_html__( 'No data available', 'plugin-report' ) );
 					$html      .= '<td class="' . $css_class . '">' . $value_text . '</td>';
 				} else {
 					$html .= $this->render_error_cell();
