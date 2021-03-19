@@ -420,7 +420,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				if ( version_compare( $wp_version, '5.5', '<' ) ) {
 					$html .= '<td>' . __( 'Requires WordPress 5.5 or higher', 'plugin-report' ) . '</td>';
 				} else {
-					if ( isset( $report['auto-update'] ) && 1 === $report['auto-update'] ) {
+					if ( isset( $report['auto-update'] ) && $report['auto-update'] ) {
 						$html .= '<td class="' . self::CSS_CLASS_LOW . '">' . __( 'Enabled', 'plugin-report' ) . '</td>';
 					} else {
 						$html .= '<td>' . __( 'Not enabled', 'plugin-report' ) . '</td>';
