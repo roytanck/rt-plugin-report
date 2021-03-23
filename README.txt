@@ -2,10 +2,10 @@
 Contributors: roytanck, zodiac1978, pedromendonca, PBMod
 Tags: admin, plugins, multisite, report
 License: GPLv3
-Version: 9.1.8.2.7
-Stable tag: 9.1.8.2.7
+Version: 9.1.8.3.7
+Stable tag: 9.1.8.3.7
 Requires at least: 5.1
-Tested up to: 5.6.2
+Tested up to: 5.7
 Requires PHP: 7.4
 
 A WordPress plugin that provides detailed information about currently installed plugins.
@@ -29,6 +29,9 @@ Special thanks go to [Tristen Forsythe Brown](http://tristen.ca/) for the [table
 
 
 == Changelog ==
+
+= 9.1.8.3.7 (2021-03-21) =
+from master branch: Fixed an issue where plugin auto-updates were not displayed correctly
 
 = 9.1.8.2.7 (2021-03-09) =
 percentage value fix on rating column

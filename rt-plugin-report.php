@@ -9,10 +9,10 @@ Author:            Roy Tanck und PBMod
 Author URI:        https://roytanck.com
 License:           GPLv3
 Network:           true
-Version: 9.1.8.2.7
-Stable tag: 9.1.8.2.7
+Version: 9.1.8.3.7
+Stable tag: 9.1.8.3.7
 Requires at least: 5.1
-Tested up to: 5.6.2
+Tested up to: 5.7
 Requires PHP: 7.4
 */
 
@@ -455,11 +455,11 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				} else {
 					$html .= '<td>' . $report['local_info']['Version'] . '</td>';
 				}
-				// Auto-update
+				// Auto-update.
 				if ( version_compare( $wp_version, '5.5', '<' ) ) {
 					$html .= '<td>' . __( 'Requires WordPress 5.5 or higher', 'plugin-report' ) . '</td>';
 				} else {
-					if ( isset( $report['auto-update'] ) && $report['auto-update'] == 1 ) {
+					if ( isset( $report['auto-update'] ) && $report['auto-update'] ) {
 						$html .= '<td class="' . self::CSS_CLASS_LOW . '">' . __( 'Enabled', 'plugin-report' ) . '</td>';
 					} else {
 						$html .= '<td>' . __( 'Not enabled', 'plugin-report' ) . '</td>';
