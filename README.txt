@@ -70,7 +70,7 @@ Special thanks go to [Tristen Forsythe Brown](http://tristen.ca/) for the [table
 * Adds an "activated" column to the report table
 
 = 1.3 (2019-11-29) =
-* Better table styles, inluding call background colors
+* Better table styles, including cell background colors
 * Improved error messages
 * Cached information is now automatically refreshed when a plugin is updated through wp-admin
 
