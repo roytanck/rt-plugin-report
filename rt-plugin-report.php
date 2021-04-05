@@ -131,7 +131,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			echo '<table id="plugin-report-table" class="wp-list-table widefat fixed striped">';
 			echo '<thead>';
 			echo '<tr>';
-			echo '<th>' . esc_html__( 'Name', 'plugin-report' ) . '</th>';
+			echo '<th data-sort-default>' . esc_html__( 'Name', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Author', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Activated', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="none" class="no-sort">' . esc_html__( 'Installed version', 'plugin-report' ) . '</th>';
