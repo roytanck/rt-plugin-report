@@ -291,6 +291,27 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					// Get the locally available info, and add it  to the report.
 					foreach ( $plugins as $key => $plugin ) {
 						if ( $this->get_plugin_slug( $key ) === $slug ) {
+
+							// Translate plugin data.
+							$textdomain = $plugin['TextDomain'];
+							if ( $textdomain ) {
+								if ( ! is_textdomain_loaded( $textdomain ) ) {
+									if ( $plugin['DomainPath'] ) {
+										load_plugin_textdomain( $textdomain, false, dirname( $plugin_file ) . $plugin['DomainPath'] );
+									} else {
+										load_plugin_textdomain( $textdomain, false, dirname( $plugin_file ) );
+									}
+								}
+							} elseif ( 'hello.php' === basename( $plugin_file ) ) {
+								$textdomain = 'default';
+							}
+							if ( $textdomain ) {
+								foreach ( array( 'Name', 'PluginURI', 'Description', 'Author', 'AuthorURI', 'Version' ) as $field ) {
+									// phpcs:ignore WordPress.WP.I18n.LowLevelTranslationFunction,WordPress.WP.I18n.NonSingularStringLiteralText,WordPress.WP.I18n.NonSingularStringLiteralDomain
+									$plugin[ $field ] = translate( $plugin[ $field ], $textdomain );
+								}
+							}
+
 							$report['local_info']  = $plugin;
 							$report['file_path']   = $key;
 							$report['auto-update'] = in_array( $key, $auto_updates );
