@@ -131,7 +131,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			echo '<table id="plugin-report-table" class="wp-list-table widefat fixed striped">';
 			echo '<thead>';
 			echo '<tr>';
-			echo '<th>' . esc_html__( 'Name', 'plugin-report' ) . '</th>';
+			echo '<th data-sort-default>' . esc_html__( 'Name', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Author', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Activated', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="none" class="no-sort">' . esc_html__( 'Installed version', 'plugin-report' ) . '</th>';
@@ -288,7 +288,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					// Add the plugin's slug to the report.
 					$report['slug'] = $slug;
 
-					// Get the locally available info, and add it  to the report.
+					// Get the locally available info, and add it to the report.
 					foreach ( $plugins as $key => $plugin ) {
 						if ( $this->get_plugin_slug( $key ) === $slug ) {
 
@@ -315,6 +315,10 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 							$report['local_info']  = $plugin;
 							$report['file_path']   = $key;
 							$report['auto-update'] = in_array( $key, $auto_updates );
+
+							// Change any whitespace to default space.
+							$report['local_info']['Name'] = preg_replace( '/\s+/u', ' ', $report['local_info']['Name'] );
+
 							break;
 						}
 					}
