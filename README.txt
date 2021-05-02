@@ -33,7 +33,7 @@ Special thanks go to [Tristen Forsythe Brown](http://tristen.ca/) for the [table
 * Fixed a minor issues that could cause problems with the plugin's translations.
 
 = 1.9 (2021-05-02) =
-* Display translated plugin inf when available (thanks, @zodiac1978)
+* Display translated plugin info when available (thanks, @zodiac1978)
 * Fixed default sorting of plugins to match WP's plugins screen (thanks, @zodiac1978).
 
 = 1.8.3 (2021-03-19) =
