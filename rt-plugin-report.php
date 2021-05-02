@@ -308,7 +308,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 							if ( $textdomain ) {
 								foreach ( array( 'Name', 'PluginURI', 'Description', 'Author', 'AuthorURI', 'Version' ) as $field ) {
 									// phpcs:ignore WordPress.WP.I18n.LowLevelTranslationFunction,WordPress.WP.I18n.NonSingularStringLiteralText,WordPress.WP.I18n.NonSingularStringLiteralDomain
-									$plugin[ $field ] = __( $plugin[ $field ], $textdomain );
+									$plugin[ $field ] = translate( $plugin[ $field ], $textdomain );
 								}
 							}
 
