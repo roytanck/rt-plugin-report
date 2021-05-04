@@ -2,8 +2,8 @@
 Contributors: roytanck, zodiac1978, pedromendonca, PBMod
 Tags: admin, plugins, multisite, report
 License: GPLv3
-Version: 9.1.8.3.7
-Stable tag: 9.1.8.3.7
+Version: 9.1.9.1.7
+Stable tag: 9.1.9.1.7
 Requires at least: 5.1
 Tested up to: 5.7
 Requires PHP: 7.4
@@ -29,6 +29,13 @@ Special thanks go to [Tristen Forsythe Brown](http://tristen.ca/) for the [table
 
 
 == Changelog ==
+
+= 9.1.9.1.7 (2021-05-02) =
+* Fixed a minor issues that could cause problems with the plugin's translations.
+
+= 9.1.9.0.7 (2021-05-02) =
+* Display translated plugin info when available (thanks, @zodiac1978)
+* Fixed default sorting of plugins to match WP's plugins screen (thanks, @zodiac1978).
 
 = 9.1.8.3.7 (2021-03-21) =
 from master branch: Fixed an issue where plugin auto-updates were not displayed correctly

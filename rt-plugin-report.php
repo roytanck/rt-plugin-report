@@ -9,8 +9,8 @@ Author:            Roy Tanck und PBMod
 Author URI:        https://roytanck.com
 License:           GPLv3
 Network:           true
-Version: 9.1.8.3.7
-Stable tag: 9.1.8.3.7
+Version: 9.1.9.1.7
+Stable tag: 9.1.9.1.7
 Requires at least: 5.1
 Tested up to: 5.7
 Requires PHP: 7.4
@@ -46,7 +46,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		const CSS_CLASS_HIGH = 'pr-risk-high';
 
 		// Other class constants.
-		const PLUGIN_VERSION        = '9.1.7';
+		const PLUGIN_VERSION        = '9.1.9.1';
 		const COLS_PER_ROW          = 7;
 		const CACHE_LIFETIME        = DAY_IN_SECONDS;
 		const CACHE_LIFETIME_NOREPO = WEEK_IN_SECONDS;
@@ -146,7 +146,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			echo '<table id="plugin-report-table" class="wp-list-table widefat striped">';
 			echo '<thead>';
 			echo '<tr>';
-			echo '<th>' . esc_html__( 'Name', 'plugin-report' ) . '</th>';
+			echo '<th data-sort-default>' . esc_html__( 'Name', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Description | Author', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Activated', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="none" class="no-sort">' . esc_html__( 'Installed version', 'plugin-report' ) . '</th>';
@@ -297,10 +297,31 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					// Add the plugin's slug to the report.
 					$report['slug'] = $slug;
 
-					// Get the locally available info, and add it  to the report.
+					// Get the locally available info, and add it to the report.
 					$directory = str_replace('/wp-content/themes', '/wp-content/plugins', get_theme_root()).'/';
 					foreach ( $plugins as $key => $plugin ) {
 						if ( $this->get_plugin_slug( $key ) == $slug ) {
+
+                            // Translate plugin data.
+                            $textdomain = $plugin['TextDomain'];
+                            if ( $textdomain ) {
+                                if ( ! is_textdomain_loaded( $textdomain ) ) {
+                                    if ( $plugin['DomainPath'] ) {
+                                        load_plugin_textdomain( $textdomain, false, dirname( $plugin_file ) . $plugin['DomainPath'] );
+                                    } else {
+                                        load_plugin_textdomain( $textdomain, false, dirname( $plugin_file ) );
+                                    }
+                                }
+                            } elseif ( 'hello.php' === basename( $plugin_file ) ) {
+                                $textdomain = 'default';
+                            }
+                            if ( $textdomain ) {
+                                foreach ( array( 'Name', 'PluginURI', 'Description', 'Author', 'AuthorURI', 'Version' ) as $field ) {
+                                    // phpcs:ignore WordPress.WP.I18n.LowLevelTranslationFunction,WordPress.WP.I18n.NonSingularStringLiteralText,WordPress.WP.I18n.NonSingularStringLiteralDomain
+                                    $plugin[ $field ] = translate( $plugin[ $field ], $textdomain );
+                                }
+                            }							
+							
 							// Testedupto, PHPMin, MysqlMin abfragen
 							$plugin_data = $plugin_data = get_file_data( $directory . $key,
 								array(
