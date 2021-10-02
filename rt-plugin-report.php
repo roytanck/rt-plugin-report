@@ -12,14 +12,12 @@ Network:           true
 Version: 9.1.9.1.7
 Stable tag: 9.1.9.1.7
 Requires at least: 5.1
-Tested up to: 5.7
+Tested up to: 5.8.1
 Requires PHP: 7.4
 */
 
 // If called without WordPress, exit.
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+if ( ! defined( 'ABSPATH' ) ) {	exit; }
 
 add_action( 'plugins_loaded', 'PluginReport_textdomain' );
 function PluginReport_textdomain() {
@@ -44,24 +42,17 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		const CSS_CLASS_LOW  = 'pr-risk-low';
 		const CSS_CLASS_MED  = 'pr-risk-medium';
 		const CSS_CLASS_HIGH = 'pr-risk-high';
-
 		// Other class constants.
 		const PLUGIN_VERSION        = '9.1.9.1';
 		const COLS_PER_ROW          = 7;
 		const CACHE_LIFETIME        = DAY_IN_SECONDS;
 		const CACHE_LIFETIME_NOREPO = WEEK_IN_SECONDS;
-
-		/**
-		 * Constructor
-		 */
+		// Constructor
 		public function __construct() {
 			// Intentionally left blank.
 		}
 
-
-		/**
-		 * Set up things like hooks and such
-		 */
+		// Set up things like hooks and such
 		public function init() {
 			// Hook for the admin page.
 			if ( is_multisite() ) {
@@ -77,10 +68,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			add_action( 'upgrader_process_complete', array( $this, 'upgrade_delete_cache_items' ), 10, 2 );
 		}
 
-
-		/**
-		 * Add a new options page to the network admin
-		 */
+		// Add a new options page to the network admin
 		public function register_settings_page() {
 			add_plugins_page(
 				esc_html_x( 'Plugin Report', 'Page and menu title', 'plugin-report' ),
@@ -91,10 +79,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			);
 		}
 
-
-		/**
-		 * Render the options page
-		 */
+		// Render the options page
 		public function settings_page() {
 			// Check user capabilities, just to be sure.
 			if ( ! current_user_can( 'manage_options' ) ) {
@@ -181,10 +166,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			echo '</div>';
 		}
 
-
-		/**
-		 * Enqueue admin javascript
-		 */
+		// Enqueue admin javascript
 		public function enqueue_assets( $hook ) {
 			// Check if we're on the right screen.
 			if ( 'plugins_page_plugin_report' !== $hook ) {
@@ -210,10 +192,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			wp_enqueue_style( 'plugin-report-css', plugin_dir_url( __FILE__ ) . 'css/plugin-report.css', array(), self::PLUGIN_VERSION );
 		}
 
-
-		/**
-		 * Get the slugs for all currently installed plugins
-		 */
+		// Get the slugs for all currently installed plugins
 		private function get_plugin_slugs() {
 			$plugins = get_plugins();
 			$slugs   = array();
@@ -223,10 +202,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			return $slugs;
 		}
 
-
-		/**
-		 * Convert a plugin's file path into its slug
-		 */
+		// Convert a plugin's file path into its slug
 		private function get_plugin_slug( $file ) {
 			if ( strpos( $file, '/' ) !== false ) {
 				$parts = explode( '/', $file );
@@ -236,32 +212,23 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			return sanitize_title( $parts[0] );
 		}
 
-
-		/**
-		 * AJAX handler
-		 * Returns a full html table row with the plugin's data
-		 */
+		// AJAX handler * Returns a full html table row with the plugin's data
 		public function get_plugin_info() {
 
 			// Check the ajax nonce, display an error if the check fails.
 			if ( ! check_ajax_referer( 'plugin_report_nonce', 'nonce', false ) ) {
 				wp_die();
 			}
-
 			// Check user capabilites, just to be sure.
 			if ( ! current_user_can( 'manage_options' ) ) {
 				wp_die();
 			}
-
 			// Check if get_plugins() function exists.
 			if ( ! function_exists( 'plugins_api' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
 			}
-
 			$slug = sanitize_title( $_POST['slug'] );
-
 			$report = $this->assemble_plugin_report( $slug );
-
 			if ( $report ) {
 				$table_row = $this->render_table_row( $report );
 			} else {
@@ -275,15 +242,11 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			);
 			// Return the response.
 			echo wp_json_encode( $response );
-
 			wp_die();
 		}
 
 
-		/**
-		 * Gather all the info we can get about a plugin.
-		 * Uses transient caching to avoid doing repo API calls on every page visit
-		 */
+		// Gather all the info we can get about a plugin * Uses transient caching to avoid doing repo API calls on every page visit
 		private function assemble_plugin_report( $slug ) {
 			if ( ! empty( $slug ) ) {
 				$report    = array();
@@ -393,10 +356,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 		}
 
-
-		/**
-		 * From a report, generate an HTML table row with relevant data for the plugin
-		 */
+		// From a report, generate an HTML table row with relevant data for the plugin
 		private function render_table_row( $report ) {
 			// Get the current WP version number.
 			global $wp_version;
@@ -520,18 +480,12 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			return $html;
 		}
 
-
-		/**
-		 * Format an error message as a table row, so we can return it to javascript
-		 */
+		// Format an error message as a table row, so we can return it to javascript
 		private function render_error_row( $message ) {
 			return '<tr class="pluginreport-row-error"><td colspan="' . self::COLS_PER_ROW . '">' . $message . '</td></tr>';
 		}
 
-
-		/**
-		 * Format an error message as a table cell, so we can return it to javascript
-		 */
+		// Format an error message as a table cell, so we can return it to javascript
 		private function render_error_cell( $message = null ) {
 			if ( ! $message ) {
 				$message = esc_html__( 'No data available', 'plugin-report' );
@@ -539,10 +493,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			return '<td class="pluginreport-cell-error">' . $message . '</td>';
 		}
 
-
-		/**
-		 * Figure out what CSS class to use based on current and optimal version numbers
-		 */
+		// Figure out what CSS class to use based on current and optimal version numbers
 		private function get_version_risk_classname( $available, $optimal ) {
 			// If the version is equal or higher, indicate low risk.
 			if ( version_compare( $available, $optimal, '>=' ) ) {
@@ -552,10 +503,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			return self::CSS_CLASS_HIGH;
 		}
 
-
-		/**
-		 * Assess the risk associated with low ratings or poor compatibility feedback, return corresponding CSS class
-		 */
+		// Assess the risk associated with low ratings or poor compatibility feedback, return corresponding CSS class
 		private function get_percentage_risk_classname( $perc ) {
 			if ( $perc < 70 ) {
 				return self::CSS_CLASS_HIGH;
@@ -566,10 +514,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			return self::CSS_CLASS_LOW;
 		}
 
-
-		/**
-		 * Assess the risk associated with low ratings or poor compatibility feedback, return corresponding CSS class
-		 */
+		// Assess the risk associated with low ratings or poor compatibility feedback, return corresponding CSS class
 		private function get_timediff_risk_classname( $time_diff ) {
 			$days = $time_diff / ( DAY_IN_SECONDS );
 			if ( $days > 365 ) {
@@ -580,7 +525,6 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			}
 			return self::CSS_CLASS_LOW;
 		}
-
 
 		/**
 		 * Get the latest available WordPress version using WP core functions
@@ -601,10 +545,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			return $update->version;
 		}
 
-
-		/**
-		 * Gather statistics about a plugin's activation on a multisite install
-		 */
+		// Gather statistics about a plugin's activation on a multisite install
 		private function get_multisite_activation( $path ) {
 			// Create an array to contain the return values.
 			$activation_status = array(
@@ -641,10 +582,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			return $activation_status;
 		}
 
-
-		/**
-		 * Create a cache key that is unique to the provided plugin slug.
-		 */
+		// Create a cache key that is unique to the provided plugin slug.
 		private function create_cache_key( $slug ) {
 			// Create a hash for the plugin slug.
 			$slug_hash = hash( 'sha256', $slug );
@@ -655,9 +593,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		}
 
 
-		/**
-		 * Clear all cached plugin info
-		 */
+		// Clear all cached plugin info
 		private function clear_cache() {
 			// Request a list of all plugins.
 			$plugins = get_plugins();
@@ -669,9 +605,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		}
 
 
-		/**
-		 * Remove the cache item for a single plugin
-		 */
+		// Remove the cache item for a single plugin
 		private function clear_cache_item( $slug ) {
 			if ( isset( $slug ) ) {
 				$cache_key = $this->create_cache_key( $slug );
@@ -679,10 +613,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			}
 		}
 
-
-		/**
-		 * Selectively delete cache for plugins that have been updated.
-		 */
+		// Selectively delete cache for plugins that have been updated.
 		public function upgrade_delete_cache_items( $upgrader, $data ) {
 			// Check if plugins have been upgraded by WP.
 			if ( isset( $data ) && isset( $data['plugins'] ) && is_array( $data['plugins'] ) ) {
@@ -699,5 +630,4 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 	// Instantiate the class.
 	$plugin_report_instance = new RT_Plugin_Report();
 	$plugin_report_instance->init();
-
 }
