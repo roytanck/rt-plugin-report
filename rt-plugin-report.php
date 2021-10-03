@@ -339,7 +339,10 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 						),
 					);
 
-					$returned_object = plugins_api( 'plugin_information', $args );
+					// Check wordpress.org only if "Update URI" plugin header is not set.
+					if ( ! $report['local_info']['UpdateURI'] ) {
+						$returned_object = plugins_api( 'plugin_information', $args );
+					}
 
 					// Add the repo info to the report.
 					if ( ! is_wp_error( $returned_object ) ) {
