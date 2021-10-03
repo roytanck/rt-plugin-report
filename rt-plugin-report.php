@@ -340,7 +340,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					);
 
 					// Check wordpress.org only if "Update URI" plugin header is not set.
-					if ( ! $report['local_info']['UpdateURI'] ) {
+					if ( empty( $report['local_info']['UpdateURI'] ) ) {
 						$returned_object = plugins_api( 'plugin_information', $args );
 					}
 
