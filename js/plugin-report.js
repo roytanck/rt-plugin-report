@@ -111,7 +111,7 @@ jQuery(document).ready( function( $ ){
 		// Create a link element, clickit and remove it.
 		var link = document.createElement( 'a' );
 		var now = new Date();
-		link.download = 'plugin-report-' + now.getFullYear() + '-' + String( '0' + now.getMonth() ).slice(-2) + '-' + String( '0' + now.getDate() ).slice(-2) + '.csv';
+		link.download = 'plugin-report-' + now.getFullYear() + '-' + String( '0' + (now.getMonth()+1) ).slice(-2) + '-' + String( '0' + now.getDate() ).slice(-2) + '.csv';
 		link.href = URL.createObjectURL( new Blob( [ "\ufeff", csv_data ], {type: 'text/csv; header=present'} ) );
 		link.click();
 		link.remove();

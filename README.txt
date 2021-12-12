@@ -2,8 +2,8 @@
 Contributors: roytanck, zodiac1978, pedromendonca, PBMod
 Tags: admin, plugins, multisite, report
 License: GPLv3
-Version: 9.1.9.1.7
-Stable tag: 9.1.9.1.7
+Version: 9.1.9.3.7
+Stable tag: 9.1.9.3.7
 Requires at least: 5.1
 Tested up to: 5.8.2
 Requires PHP: 7.4
@@ -29,6 +29,12 @@ Special thanks go to [Tristen Forsythe Brown](http://tristen.ca/) for the [table
 
 
 == Changelog ==
+
+= 9.1.9.3.7 (2021-12-12) =
+pulled from master branch:
+* Fixed an issue where the exported CSV filename contained the wrong month (thanks, @zodiac1978)
+* Skip the wordpress.org API call if the plugin's Update URI is set (thanks, @zodiac1978)
+* Tested with WP 5.8.2
 
 = 9.1.9.1.7 (2021-05-02) =
 * Fixed a minor issues that could cause problems with the plugin's translations.

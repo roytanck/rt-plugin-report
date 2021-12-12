@@ -9,8 +9,8 @@ Author:            Roy Tanck und PBMod
 Author URI:        https://roytanck.com
 License:           GPLv3
 Network:           true
-Version: 9.1.9.1.7
-Stable tag: 9.1.9.1.7
+Version: 9.1.9.3.7
+Stable tag: 9.1.9.3.7
 Requires at least: 5.1
 Tested up to: 5.8.2
 Requires PHP: 7.4
@@ -330,8 +330,10 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 							'author'        => true,
 						),
 					);
-					$returned_object = plugins_api( 'plugin_information', $args );
-
+                   // Check wordpress.org only if "Update URI" plugin header is not set.
+					if ( empty( $report['local_info']['UpdateURI'] ) ) {
+						$returned_object = plugins_api( 'plugin_information', $args );
+					}
 					// Add the repo info to the report.
 					if ( ! is_wp_error( $returned_object ) ) {
 						$report['repo_info'] = maybe_unserialize( $returned_object );
