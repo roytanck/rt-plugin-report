@@ -32,7 +32,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 		// Other class constants.
 		const PLUGIN_VERSION        = '1.9.1';
-		const COLS_PER_ROW          = 8;
+		const COLS_PER_ROW          = 9;
 		const CACHE_LIFETIME        = DAY_IN_SECONDS;
 		const CACHE_LIFETIME_NOREPO = WEEK_IN_SECONDS;
 
@@ -135,6 +135,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			echo '<th>' . esc_html__( 'Author', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Activated', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="none" class="no-sort">' . esc_html__( 'Installed version', 'plugin-report' ) . '</th>';
+			echo '<th>' . esc_html__( 'Repository', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Auto-update', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Last update', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="dotsep">' . esc_html__( 'Tested up to WP version', 'plugin-report' ) . '</th>';
@@ -385,18 +386,21 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			} else {
 				// Start the new table row.
 				$html = '<tr class="plugin-report-row-' . $report['slug'] . '">';
+
 				// Name.
 				if ( isset( $report['local_info']['PluginURI'] ) && ! empty( $report['local_info']['PluginURI'] ) ) {
 					$html .= '<td><a href="' . $report['local_info']['PluginURI'] . '"><strong>' . $report['local_info']['Name'] . '</strong></a></td>';
 				} else {
 					$html .= '<td><strong>' . $report['local_info']['Name'] . '</strong></td>';
 				}
+
 				// Author.
 				if ( isset( $report['local_info']['AuthorURI'] ) && ! empty( $report['local_info']['AuthorURI'] ) ) {
 					$html .= '<td><a href="' . $report['local_info']['AuthorURI'] . '">' . $report['local_info']['Author'] . '</a></td>';
 				} else {
 					$html .= '<td>' . $report['local_info']['Author'] . '</td>';
 				}
+
 				// Activated.
 				$active    = __( 'Please clear cache to update', 'plugin-report' );
 				$css_class = self::CSS_CLASS_MED;
@@ -416,6 +420,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					}
 					$html .= '<td class="' . $css_class . '">' . $active . '</td>';
 				}
+
 				// Installed / available version.
 				if ( isset( $report['repo_info'] ) ) {
 					$css_class = $this->get_version_risk_classname( $report['local_info']['Version'], $report['repo_info']->version );
@@ -444,6 +449,27 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				} else {
 					$html .= '<td>' . $report['local_info']['Version'] . '</td>';
 				}
+
+				// Repository.
+				if ( isset( $report['local_info']['UpdateURI'] ) ) {
+					if ( empty( $report['local_info']['UpdateURI'] ) ) {
+						if ( isset( $report['repo_error_code'] ) && $report['repo_error_code'] === 'plugins_api_failed' ) {
+							$html .= '<td class="' . self::CSS_CLASS_HIGH . '">' . __( 'Repository not set', 'plugin-report' ) . '</td>';
+						} else {
+							$html .= '<td class="' . self::CSS_CLASS_LOW . '">wordpress.org</td>';
+						}
+					} else {
+						if( strcasecmp( $report['local_info']['UpdateURI'], 'false' ) === 0 ) {
+							$html .= '<td class="' . self::CSS_CLASS_LOW . '">' . __( 'Updates disabled', 'plugin-report' ) . '</td>';
+						} else {
+							$host = wp_parse_url( $report['local_info']['UpdateURI'] );
+							$html .= '<td class="' . self::CSS_CLASS_MED . '">' . $host['host'] . '</td>';
+						}
+					}
+				} else {
+					$html .= $this->render_error_cell();
+				}
+
 				// Auto-update.
 				if ( version_compare( $wp_version, '5.5', '<' ) ) {
 					$html .= '<td>' . __( 'Requires WordPress 5.5 or higher', 'plugin-report' ) . '</td>';
@@ -454,6 +480,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 						$html .= '<td>' . __( 'Not enabled', 'plugin-report' ) . '</td>';
 					}
 				}
+
 				// Last updates.
 				if ( isset( $report['repo_info'] ) ) {
 					$time_update = new DateTime( $report['repo_info']->last_updated );
@@ -463,6 +490,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				} else {
 					$html .= $this->render_error_cell();
 				}
+
 				// Tested up to.
 				if ( isset( $report['repo_info'] ) ) {
 					$css_class = $this->get_version_risk_classname( $report['repo_info']->tested, $wp_latest, true );
@@ -470,6 +498,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				} else {
 					$html .= $this->render_error_cell();
 				}
+
 				// Overall user rating.
 				if ( isset( $report['repo_info'] ) ) {
 					$css_class  = ( intval( $report['repo_info']->num_ratings ) > 0 ) ? $this->get_percentage_risk_classname( intval( $report['repo_info']->rating ) ) : '';
@@ -478,6 +507,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				} else {
 					$html .= $this->render_error_cell();
 				}
+
 				// Close the new table row.
 				$html .= '</tr>';
 			}
