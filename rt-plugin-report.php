@@ -133,9 +133,9 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 			echo '<tr>';
 			echo '<th data-sort-default>' . esc_html__( 'Name', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Author', 'plugin-report' ) . '</th>';
+			echo '<th>' . esc_html__( 'Repository', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Activated', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="none" class="no-sort">' . esc_html__( 'Installed version', 'plugin-report' ) . '</th>';
-			echo '<th>' . esc_html__( 'Repository', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Auto-update', 'plugin-report' ) . '</th>';
 			echo '<th>' . esc_html__( 'Last update', 'plugin-report' ) . '</th>';
 			echo '<th data-sort-method="dotsep">' . esc_html__( 'Tested up to WP version', 'plugin-report' ) . '</th>';
@@ -401,6 +401,26 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$html .= '<td>' . $report['local_info']['Author'] . '</td>';
 				}
 
+				// Repository.
+				if ( isset( $report['local_info']['UpdateURI'] ) ) {
+					if ( empty( $report['local_info']['UpdateURI'] ) ) {
+						if ( isset( $report['repo_error_code'] ) && $report['repo_error_code'] === 'plugins_api_failed' ) {
+							$html .= '<td class="' . self::CSS_CLASS_HIGH . '">' . __( 'Repository not set', 'plugin-report' ) . '</td>';
+						} else {
+							$html .= '<td class="' . self::CSS_CLASS_LOW . '">wordpress.org</td>';
+						}
+					} else {
+						$parsed_url = wp_parse_url( $report['local_info']['UpdateURI'] );
+						if( $parsed_url && isset( $parsed_url[ 'host' ] ) ){
+							$html .= '<td class="' . self::CSS_CLASS_MED . '">' . $parsed_url['host'] . '</td>';
+						} else {
+							$html .= '<td class="' . self::CSS_CLASS_LOW . '">' . __( 'Updates disabled', 'plugin-report' ) . '</td>';
+						}
+					}
+				} else {
+					$html .= $this->render_error_cell();
+				}
+
 				// Activated.
 				$active    = __( 'Please clear cache to update', 'plugin-report' );
 				$css_class = self::CSS_CLASS_MED;
@@ -448,26 +468,6 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					$html .= '</td>';
 				} else {
 					$html .= '<td>' . $report['local_info']['Version'] . '</td>';
-				}
-
-				// Repository.
-				if ( isset( $report['local_info']['UpdateURI'] ) ) {
-					if ( empty( $report['local_info']['UpdateURI'] ) ) {
-						if ( isset( $report['repo_error_code'] ) && $report['repo_error_code'] === 'plugins_api_failed' ) {
-							$html .= '<td class="' . self::CSS_CLASS_HIGH . '">' . __( 'Repository not set', 'plugin-report' ) . '</td>';
-						} else {
-							$html .= '<td class="' . self::CSS_CLASS_LOW . '">wordpress.org</td>';
-						}
-					} else {
-						if( strcasecmp( $report['local_info']['UpdateURI'], 'false' ) === 0 ) {
-							$html .= '<td class="' . self::CSS_CLASS_LOW . '">' . __( 'Updates disabled', 'plugin-report' ) . '</td>';
-						} else {
-							$host = wp_parse_url( $report['local_info']['UpdateURI'] );
-							$html .= '<td class="' . self::CSS_CLASS_MED . '">' . $host['host'] . '</td>';
-						}
-					}
-				} else {
-					$html .= $this->render_error_cell();
 				}
 
 				// Auto-update.
