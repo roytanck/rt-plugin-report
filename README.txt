@@ -4,7 +4,7 @@ Tags: admin, plugins, multisite
 Requires at least: 4.6
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 1.9.3
+Stable tag: 2.0.0
 License: GPLv3
 
 A WordPress plugin that provides detailed information about currently installed plugins.
@@ -29,6 +29,10 @@ Special thanks go to [Tristen Forsythe Brown](http://tristen.ca/) for the [table
 
 == Changelog ==
 
+= 2.0.0 (2021-12-17) =
+* Added a new column to display repository information and detect possible supply chain issues
+* Tablesort updated to the latest version
+
 = 1.9.3 (2021-11-26) =
 * Fixed an issue where the exported CSV filename contained the wrong month (thanks, @zodiac1978)
 
@@ -37,11 +41,11 @@ Special thanks go to [Tristen Forsythe Brown](http://tristen.ca/) for the [table
 * Tested with WP 5.8
 
 = 1.9.1 (2021-05-02) =
-* Fixed a minor issues that could cause problems with the plugin's translations.
+* Fixed a minor issues that could cause problems with the plugin's translations
 
 = 1.9 (2021-05-02) =
 * Display translated plugin info when available (thanks, @zodiac1978)
-* Fixed default sorting of plugins to match WP's plugins screen (thanks, @zodiac1978).
+* Fixed default sorting of plugins to match WP's plugins screen (thanks, @zodiac1978)
 
 = 1.8.3 (2021-03-19) =
 * Fixed an issue where plugin auto-updates were not displayed correctly
