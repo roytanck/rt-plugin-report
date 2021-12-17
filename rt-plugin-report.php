@@ -340,8 +340,10 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 						),
 					);
 
-					// Check wordpress.org only if "Update URI" plugin header is not set.
-					if ( empty( $report['local_info']['UpdateURI'] ) ) {
+					// Check wordpress.org only if "Update URI" plugin header is not set or set to wordpress.org.
+					$parsed_repo_url = wp_parse_url( $report['local_info']['UpdateURI'] );
+					$repo_host = isset( $parsed_repo_url['host'] ) ? $parsed_repo_url['host'] : null;
+					if ( empty( $repo_host ) || strtolower( $repo_host ) === 'w.org' || strtolower( $repo_host ) === 'wordpress.org' ) {
 						$returned_object = plugins_api( 'plugin_information', $args );
 					}
 
@@ -403,18 +405,27 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 				// Repository.
 				if ( isset( $report['local_info']['UpdateURI'] ) ) {
-					if ( empty( $report['local_info']['UpdateURI'] ) ) {
+					// Parse the UpdateURI's value to get the host.
+					$parsed_repo_url = wp_parse_url( $report['local_info']['UpdateURI'] );
+					// If the URI is valid, extract the host, otherwise we'll use the header value.
+					$repo_host = isset( $parsed_repo_url['host'] ) ? $parsed_repo_url['host'] : $report['local_info']['UpdateURI'];
+					// Check if the plugin is supposed to be hosted on wp.org.
+					if ( empty( $repo_host ) || strtolower( $repo_host ) === 'w.org' || strtolower( $repo_host ) === 'wordpress.org' ) {
+						// Plugin should be available on wp.org, check if we got a 'not found' error.
 						if ( isset( $report['repo_error_code'] ) && $report['repo_error_code'] === 'plugins_api_failed' ) {
-							$html .= '<td class="' . self::CSS_CLASS_HIGH . '">' . __( 'Repository not set', 'plugin-report' ) . '</td>';
+							// Plugin is not available in the wp.org repo.
+							$html .= '<td class="' . self::CSS_CLASS_HIGH . '">' . __( 'wordpress.org, plugin not found', 'plugin-report' ) . '</td>';
 						} else {
+							// Plugin is available on wp.org.
 							$html .= '<td class="' . self::CSS_CLASS_LOW . '">wordpress.org</td>';
 						}
 					} else {
-						$parsed_url = wp_parse_url( $report['local_info']['UpdateURI'] );
-						if( $parsed_url && isset( $parsed_url[ 'host' ] ) ){
-							$html .= '<td class="' . self::CSS_CLASS_MED . '">' . $parsed_url['host'] . '</td>';
+						if ( $parsed_repo_url && isset( $parsed_repo_url[ 'host' ] ) ) {
+							// Update URI is a valid URL, display the host.
+							$html .= '<td class="' . self::CSS_CLASS_MED . '">' . $repo_host . '</td>';
 						} else {
-							$html .= '<td class="' . self::CSS_CLASS_LOW . '">' . __( 'Updates disabled', 'plugin-report' ) . '</td>';
+							// Some other value (like 'false'), so assume updates are disabled.
+							$html .= '<td class="' . self::CSS_CLASS_MED . '">' . __( 'Updates disabled', 'plugin-report' ) . '</td>';
 						}
 					}
 				} else {
