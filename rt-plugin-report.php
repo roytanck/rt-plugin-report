@@ -298,12 +298,12 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 							if ( $textdomain ) {
 								if ( ! is_textdomain_loaded( $textdomain ) ) {
 									if ( $plugin['DomainPath'] ) {
-										load_plugin_textdomain( $textdomain, false, dirname( $plugin_file ) . $plugin['DomainPath'] );
+										load_plugin_textdomain( $textdomain, false, dirname( $key ) . $plugin['DomainPath'] );
 									} else {
-										load_plugin_textdomain( $textdomain, false, dirname( $plugin_file ) );
+										load_plugin_textdomain( $textdomain, false, dirname( $key ) );
 									}
 								}
-							} elseif ( 'hello.php' === basename( $plugin_file ) ) {
+							} elseif ( 'hello.php' === basename( $key ) ) {
 								$textdomain = 'default';
 							}
 							if ( $textdomain ) {
