@@ -348,16 +348,18 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 					}
 
 					// Add the repo info to the report.
-					if ( ! is_wp_error( $returned_object ) ) {
-						$report['repo_info'] = maybe_unserialize( $returned_object );
-						// Cache the report.
-						set_site_transient( $cache_key, $report, self::CACHE_LIFETIME );
-					} else {
-						// Store the error code and message in the report.
-						$report['repo_error_code']    = $returned_object->get_error_code();
-						$report['repo_error_message'] = $returned_object->get_error_message();
-						// Cache for an extra long time when the plugin is not in the repo.
-						set_site_transient( $cache_key, $report, self::CACHE_LIFETIME_NOREPO );
+					if ( isset( $returned_object ) ) {
+						if ( ! is_wp_error( $returned_object ) ) {
+							$report['repo_info'] = maybe_unserialize( $returned_object );
+							// Cache the report.
+							set_site_transient( $cache_key, $report, self::CACHE_LIFETIME );
+						} else {
+							// Store the error code and message in the report.
+							$report['repo_error_code']    = $returned_object->get_error_code();
+							$report['repo_error_message'] = $returned_object->get_error_message();
+							// Cache for an extra long time when the plugin is not in the repo.
+							set_site_transient( $cache_key, $report, self::CACHE_LIFETIME_NOREPO );
+						}
 					}
 				} else {
 					$report = $cache;
@@ -493,7 +495,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				}
 
 				// Last updates.
-				if ( isset( $report['repo_info'] ) ) {
+				if ( isset( $report['repo_info'] ) && isset( $report['repo_info']->last_updated ) ) {
 					$time_update = new DateTime( $report['repo_info']->last_updated );
 					$time_diff   = human_time_diff( $time_update->getTimestamp(), current_time( 'timestamp' ) );
 					$css_class   = $this->get_timediff_risk_classname( current_time( 'timestamp' ) - $time_update->getTimestamp() );
@@ -503,7 +505,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				}
 
 				// Tested up to.
-				if ( isset( $report['repo_info'] ) ) {
+				if ( isset( $report['repo_info'] ) && isset( $report['repo_info']->tested ) ) {
 					$css_class = $this->get_version_risk_classname( $report['repo_info']->tested, $wp_latest, true );
 					$html     .= '<td class="' . $css_class . '">' . $report['repo_info']->tested . '</td>';
 				} else {
@@ -511,7 +513,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 				}
 
 				// Overall user rating.
-				if ( isset( $report['repo_info'] ) ) {
+				if ( isset( $report['repo_info'] ) && isset( $report['repo_info']->num_ratings ) && isset( $report['repo_info']->rating ) ) {
 					$css_class  = ( intval( $report['repo_info']->num_ratings ) > 0 ) ? $this->get_percentage_risk_classname( intval( $report['repo_info']->rating ) ) : '';
 					$value_text = ( ( intval( $report['repo_info']->num_ratings ) > 0 ) ? $report['repo_info']->rating . '%' : esc_html__( 'No data available', 'plugin-report' ) );
 					$html      .= '<td class="' . $css_class . '">' . $value_text . '</td>';
