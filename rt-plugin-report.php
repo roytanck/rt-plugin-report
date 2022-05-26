@@ -388,21 +388,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 		 */
 		private function check_exists_in_svn( $slug ) {
 			// Attempt to load the plugin's SVN repo page.
-			$args = array(
-				'timeout'     => 5,
-				'redirection' => 5,
-				'user-agent'  => 'Plugin Report',
-				'blocking'    => true,
-				'headers'     => array(),
-				'cookies'     => array(),
-				'body'        => null,
-				'compress'    => false,
-				'decompress'  => true,
-				'sslverify'   => true,
-				'stream'      => false,
-				'filename'    => null
-			);
-			$response = wp_remote_get( "http://svn.wp-plugins.org/" . $slug . "/", $args );
+			$response = wp_remote_get( "http://svn.wp-plugins.org/" . $slug . "/" );
 			// If the return value was a WP_Error, assume the answer is no.
 			if( is_wp_error( $response ) ) {
 				return false;
