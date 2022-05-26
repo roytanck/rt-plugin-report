@@ -357,6 +357,8 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 							// Store the error code and message in the report.
 							$report['repo_error_code']    = $returned_object->get_error_code();
 							$report['repo_error_message'] = $returned_object->get_error_message();
+							// Because the plugin is not found in the wordpress.org repo, check if it exists in SVN.
+							$report['exists_in_svn'] = $this->check_exists_in_svn( $slug );
 							// Cache for an extra long time when the plugin is not in the repo.
 							set_site_transient( $cache_key, $report, self::CACHE_LIFETIME_NOREPO );
 						}
@@ -375,9 +377,51 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 
 
 		/**
+		 * Check if the plugin is present in WordPress's SVN repository.
+		 * 
+		 * Function adapted from the 'Enhanced Plugin Admin' plugin by Marios Alexandrou.
+		 * See: https://plugins.trac.wordpress.org/browser/enhanced-plugin-admin/trunk/enhanced-plugin-admin.php
+		 * 
+		 * @param string $slug The plugin's slug.
+		 * 
+		 * @return boolean True if found, false if not.
+		 */
+		private function check_exists_in_svn( $slug ) {
+			// Attempt to load the plugin's SVN repo page.
+			$args = array(
+				'timeout'     => 5,
+				'redirection' => 5,
+				'user-agent'  => 'Plugin Report',
+				'blocking'    => true,
+				'headers'     => array(),
+				'cookies'     => array(),
+				'body'        => null,
+				'compress'    => false,
+				'decompress'  => true,
+				'sslverify'   => true,
+				'stream'      => false,
+				'filename'    => null
+			);
+			$response = wp_remote_get( "http://svn.wp-plugins.org/" . $slug . "/", $args );
+			// If the return value was a WP_Error, assume the answer is no.
+			if( is_wp_error( $response ) ) {
+				return false;
+			} else {
+				// If the returned HTTP code is 200, the page was found, so return true.
+				$response_code = wp_remote_retrieve_response_code( $response );
+				if( '200' == $response_code ) {
+					return true;
+				}
+			}
+			// In all other cases, assume the plugin was not found.
+			return false;
+		}
+
+
+		/**
 		 * From a report, generate an HTML table row with relevant data for the plugin.
 		 *
-		 * @param array $report   Report of plugin.
+		 * @param array $report Report of plugin.
 		 */
 		private function render_table_row( $report ) {
 			// Get the current WP version number.
@@ -416,7 +460,11 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 						// Plugin should be available on wp.org, check if we got a 'not found' error.
 						if ( isset( $report['repo_error_code'] ) && $report['repo_error_code'] === 'plugins_api_failed' ) {
 							// Plugin is not available in the wp.org repo.
-							$html .= '<td class="' . self::CSS_CLASS_HIGH . '">' . __( 'wordpress.org, plugin not found', 'plugin-report' ) . '</td>';
+							if( isset( $report['exists_in_svn'] ) && $report['exists_in_svn'] === true ) {
+								$html .= '<td class="' . self::CSS_CLASS_HIGH . '">' . __( 'Closed on wordpress.org', 'plugin-report' ) . '</td>';
+							} else {
+								$html .= '<td class="' . self::CSS_CLASS_HIGH . '">' . __( 'wordpress.org, plugin not found', 'plugin-report' ) . '</td>';
+							}
 						} else {
 							// Plugin is available on wp.org.
 							$html .= '<td class="' . self::CSS_CLASS_LOW . '">wordpress.org</td>';
