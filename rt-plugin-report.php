@@ -447,7 +447,7 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 						if ( isset( $report['repo_error_code'] ) && $report['repo_error_code'] === 'plugins_api_failed' ) {
 							// Plugin is not available in the wp.org repo.
 							if( isset( $report['exists_in_svn'] ) && $report['exists_in_svn'] === true ) {
-								$html .= '<td class="' . self::CSS_CLASS_HIGH . '">' . __( 'Closed on wordpress.org', 'plugin-report' ) . '</td>';
+								$html .= '<td class="' . self::CSS_CLASS_HIGH . '">' . __( 'wordpress.org, plugin closed', 'plugin-report' ) . '</td>';
 							} else {
 								$html .= '<td class="' . self::CSS_CLASS_HIGH . '">' . __( 'wordpress.org, plugin not found', 'plugin-report' ) . '</td>';
 							}
