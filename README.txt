@@ -2,9 +2,9 @@
 Contributors: roytanck, zodiac1978, pedromendonca
 Tags: admin, plugins, multisite
 Requires at least: 4.6
-Tested up to: 5.9
+Tested up to: 6.0
 Requires PHP: 5.6
-Stable tag: 2.0.2
+Stable tag: 2.1
 License: GPLv3
 
 A WordPress plugin that provides detailed information about currently installed plugins.
@@ -28,6 +28,9 @@ Special thanks go to [Tristen Forsythe Brown](http://tristen.ca/) for the [table
 
 
 == Changelog ==
+
+= 2.1 (2022-05-28) =
+* Added detection for plugins that have been closed in the wordpress.org repository
 
 = 2.0.2 (2022-02-12) =
 * Fixed some more PHP warnings
