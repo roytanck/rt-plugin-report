@@ -464,6 +464,8 @@ if ( is_admin() && ! class_exists( 'RT_Plugin_Report' ) ) {
 							$html .= '<td class="' . self::CSS_CLASS_MED . '">' . __( 'Updates disabled', 'plugin-report' ) . '</td>';
 						}
 					}
+				} else if ( version_compare( $wp_version, '5.8', '<' ) ) {
+					$html .= $this->render_error_cell( esc_html__( 'Only available in WP 5.8+', 'plugin-report' ) );
 				} else {
 					$html .= $this->render_error_cell();
 				}
