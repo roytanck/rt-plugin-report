@@ -2,7 +2,7 @@
 Contributors: roytanck, zodiac1978, pedromendonca
 Tags: admin, plugins, multisite
 Requires at least: 4.6
-Tested up to: 6.2
+Tested up to: 6.3
 Requires PHP: 5.6
 Stable tag: 2.1.1
 License: GPLv3
